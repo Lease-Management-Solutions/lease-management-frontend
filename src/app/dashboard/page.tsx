@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Topbar from "../components/topbar";
+import SideBar from "../components/sideBar";
+import SearchInput from "../components/searchInput";
 
 export default function Dashboard() {
   const [userData, setUserData] = useState<{ id: string; role: string } | null>(null);
@@ -15,16 +17,23 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div> 
-      <Topbar/>
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        {userData && (
-          <div className="mt-4 p-4 text-black bg-gray-100 rounded-lg">
-            <p><strong>ID:</strong> {userData.id}</p>
-            <p><strong>Role:</strong> {userData.role}</p>
-          </div>
-        )}
+    <div className="flex h-screen">
+      <SideBar /> 
+      <div className="flex flex-col flex-1">
+        <Topbar />
+        <div className="p-3 bg-gray-200 " >
+          <SearchInput />
+        </div>
+          
+        <div className=" bg-gray-200 flex flex-col items-center justify-center flex-1">
+          <h1 className="text-2xl font-bold text-black">Dashboard</h1>
+          {userData && (
+            <div className="mt-4 p-4 text-black bg-gray-100 rounded-lg">
+              <p><strong>ID:</strong> {userData.id}</p>
+              <p><strong>Role:</strong> {userData.role}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
