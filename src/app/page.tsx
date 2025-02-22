@@ -27,6 +27,7 @@ export default function Home() {
 
       if (response.ok && data.status) {
         sessionStorage.setItem("token", data.token);
+        document.cookie = `token=${data.token}; path=/; max-age=21600`;
         router.push("/dashboard");
       } else if (response.status === 403 && data.error === "Password change required") {
         sessionStorage.setItem("tempToken", data.tempToken);
