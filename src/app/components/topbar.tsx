@@ -42,7 +42,7 @@ export default function Topbar() {
 			<div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 items-center justify-between">
 					<div className="flex-1 md:flex md:items-center md:gap-12">
-						<a className="block text-teal-600" href="#">
+						<a className="block text-teal-600" href="/dashboard">
 							<span className="sr-only">Home</span>
 							<svg className="h-8 text-blue-500" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path
@@ -91,7 +91,7 @@ export default function Topbar() {
 										</a>
 										<Link href="/dataUsers" className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">
 											Usuários
-											</Link>
+										</Link>
 										<a href="#" className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">
 											Configurações
 										</a>

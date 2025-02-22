@@ -1,45 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Para o redirecionamento ao criar um novo usuário
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-}
+import { fetchUsers, createUser, deleteUser,User } from "../models/userModel";
 
 export default function DataUsers() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [statusFilter, setStatusFilter] = useState<'active' | 'inactive'>('active');
-  const router = useRouter(); // Usado para redirecionar
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "Corretor", avatar: "" });
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUserList = async () => {
       const token = sessionStorage.getItem("token");
       if (token) {
         try {
-          const response = await fetch(`http://localhost:2000/users?status=${statusFilter}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error("Erro ao carregar usuários");
-          }
-
-          const data = await response.json();
-
-          // A chave 'users' contém o array de usuários
-          if (Array.isArray(data.users)) {
-            setUsers(data.users);
-          } else {
-            console.error("A resposta da API não contém um array válido de usuários");
-          }
+          const usersList = await fetchUsers(statusFilter, token);
+          setUsers(usersList);
         } catch (error) {
           console.error(error);
         } finally {
@@ -48,12 +25,48 @@ export default function DataUsers() {
       }
     };
 
-    fetchUsers();
+    fetchUserList();
   }, [statusFilter]);
 
-  const handleCreateUser = () => {
-    router.push('/createUser'); // Redireciona para a página de criação de usuário
+  const handleCreateUser = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return;
+  
+    try {
+      
+      await createUser(newUser, token);
+  
+      alert("Usuário criado com sucesso!");
+  
+      setIsModalOpen(false);
+  
+      setNewUser({ name: "", email: "", password: "", role: "Corretor", avatar: "" });
+  
+      const updatedUsers = await fetchUsers('active', token); // Chama novamente a função de buscar usuários
+      setUsers(updatedUsers); // Atualiza o estado da lista de usuários
+       setStatusFilter('active');
+  
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
+
+  const handleDeleteUser = async (userId: string) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return;
+
+    if (!confirm("Tem certeza que deseja excluir este usuário?")) return;
+
+    try {
+      await deleteUser(userId, token);
+      alert("Usuário excluído com sucesso!");
+      setUsers(users.filter(user => user._id !== userId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   return (
     <div className="bg-gray-200 flex flex-col items-center justify-center flex-1 p-4">
@@ -91,50 +104,81 @@ export default function DataUsers() {
               </tr>
             </thead>
             <tbody>
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <tr key={user._id} className="text-black">
-                    <td className="border p-2">{user.name}</td>
-                    <td className="border p-2">{user.email}</td>
-                    <td className="border p-2">{user.role}</td>
-                    <td className="border p-2">{user.status}</td>
-                    <td className="border p-2">
-                      {/* Botões de ações */}
-                      <button className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2">
-                        Senha Provisória
-                      </button>
-                      <button className="bg-red-500 text-white px-4 py-2 rounded-md mr-2">
-                        Excluir
-                      </button>
+            
+            {users.length > 0 ? (
+              users.map((user) => (
+                <tr key={user._id} className="text-black">
+                  <td className="border p-2">{user.name}</td>
+                  <td className="border p-2">{user.email}</td>
+                  <td className="border p-2">{user.role}</td>
+                  <td className="border p-2">{user.status}</td>
+                  <td className="border p-2">
+                    {/* Botões de ações */}
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2">
+                      Senha Provisória
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(user._id)}
+                      className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
+                    >
+                      Excluir
+                    </button>
+                    
+                    {user.status === 'active' ? (
                       <button className="bg-yellow-500 text-white px-4 py-2 rounded-md mr-2">
                         Desativar
                       </button>
+                    ) : (
                       <button className="bg-green-500 text-white px-4 py-2 rounded-md mr-2">
                         Reativar
                       </button>
-                      <button className="bg-gray-500 text-white px-4 py-2 rounded-md">
-                        Salvar
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="border p-2 text-center">Nenhum usuário encontrado</td>
+                    )}
+                    
+                    <button className="bg-gray-500 text-white px-4 py-2 rounded-md">
+                      Salvar
+                    </button>
+                  </td>
                 </tr>
-              )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className=" text-black border p-2 text-center">
+                  Nenhum usuário encontrado
+                </td>
+              </tr>
+            )}
+
             </tbody>
           </table>
         </div>
       )}
 
       {/* Botão para criar novo usuário */}
-      <button
-        onClick={handleCreateUser}
-        className="mt-4 bg-teal-500 text-white px-6 py-3 rounded-md hover:bg-teal-600"
-      >
+      <button onClick={() => setIsModalOpen(true)} className="mt-4 bg-teal-500 text-white px-6 py-3 rounded-md hover:bg-teal-600">
         Novo Usuário
       </button>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-black text-xl font-bold mb-4">Criar Novo Usuário</h2>
+            <input type="text" placeholder="Nome" className=" text-black border p-2 w-full mb-2" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+            <input type="email" placeholder="Email" className="text-black border p-2 w-full mb-2" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+            <input type="password" placeholder="Senha" className="text-black border p-2 w-full mb-2" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+            <select className="text-black border p-2 w-full mb-2" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+              <option value="Corretor">Corretor</option>
+              <option value="Administrativo">Administrativo</option>
+              <option value="Financeiro">Financeiro</option>
+              <option value="SuperUsuario">SuperUsuario</option>
+            </select>
+            <input type="text" placeholder="Link do Avatar" className="text-black border p-2 w-full mb-2" value={newUser.avatar} onChange={(e) => setNewUser({ ...newUser, avatar: e.target.value })} />
+            <div className="flex justify-end mt-4">
+              <button onClick={() => setIsModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-md mr-2">Cancelar</button>
+              <button onClick={handleCreateUser} className="bg-teal-500 text-white px-4 py-2 rounded-md">Criar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
