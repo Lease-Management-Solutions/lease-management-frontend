@@ -31,6 +31,9 @@ export default function Home() {
       } else if (response.status === 403 && data.error === "Password change required") {
         sessionStorage.setItem("tempToken", data.tempToken);
         router.push("/changePassword");
+      } 
+      else if (response.status === 403 && data.error === "Usuário desativado") {
+        alert("Seu usuário está desativado. Entre em contato com o administrador.");
       } else {
         alert("Erro ao fazer login.");
       }
