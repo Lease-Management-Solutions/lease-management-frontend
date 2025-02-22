@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchUsers, createUser, deleteUser,User } from "../models/userModel";
+import { fetchUsers, createUser, deleteUser,User, changePasswordById, toggleUserStatus } from "../models/userModel";
 
 export default function DataUsers() {
   const [users, setUsers] = useState<User[]>([]);
@@ -67,6 +67,29 @@ export default function DataUsers() {
     }
   };
 
+  const handleChangePassword = async (userId: string) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return;
+  
+    try {
+      const result = await changePasswordById(userId, token);
+      alert(result.message || "Senha provisória alterada com sucesso!");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleToggleStatus = async (userId: string) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) return;
+  
+    try {
+      const result = await toggleUserStatus(userId, token);
+      alert(result.message || "Status alterado com sucesso!");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
 
   return (
     <div className="bg-gray-200 flex flex-col items-center justify-center flex-1 p-4">
@@ -114,8 +137,11 @@ export default function DataUsers() {
                   <td className="border p-2">{user.status}</td>
                   <td className="border p-2">
                     {/* Botões de ações */}
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2">
-                      Senha Provisória
+                    <button
+                        onClick={() => handleChangePassword(user._id)}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
+                      >
+                        Senha Provisória
                     </button>
                     <button
                       onClick={() => handleDeleteUser(user._id)}
@@ -125,18 +151,21 @@ export default function DataUsers() {
                     </button>
                     
                     {user.status === 'active' ? (
-                      <button className="bg-yellow-500 text-white px-4 py-2 rounded-md mr-2">
+                      <button
+                        onClick={() => handleToggleStatus(user._id)}
+                        className="bg-yellow-500 text-white px-4 py-2 rounded-md mr-2"
+                      >
                         Desativar
                       </button>
                     ) : (
-                      <button className="bg-green-500 text-white px-4 py-2 rounded-md mr-2">
+                      <button
+                        onClick={() => handleToggleStatus(user._id)}
+                        className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
+                      >
                         Reativar
                       </button>
                     )}
                     
-                    <button className="bg-gray-500 text-white px-4 py-2 rounded-md">
-                      Salvar
-                    </button>
                   </td>
                 </tr>
               ))

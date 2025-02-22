@@ -59,3 +59,38 @@ export interface User {
     return userId;
   };
   
+  export const changePasswordById = async (id: string, token: string) => {
+    const response = await fetch(`http://localhost:2000/users/changePasswordById${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ newPassword: 'temporarypassword' }), // senha provisória
+    });
+  
+    if (!response.ok) {
+      throw new Error("Erro ao trocar a senha");
+    }
+  
+    const data = await response.json();
+    return data;
+  };
+  
+  export const toggleUserStatus = async (id: string, token: string) => {
+    const response = await fetch(`http://localhost:2000/users/changeUserStatusbyId${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error("Erro ao alterar o status");
+    }
+  
+    const data = await response.json();
+    return data;
+  };
+  
