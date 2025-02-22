@@ -13,5 +13,12 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"], // Protege todas as páginas dentro de /dashboard
+  matcher: [
+    "/dashboard/:path*",
+    "/changePassword",
+    "/contracts/:path*",
+    "/dataUsers/:path*",
+    "/financial/:path*"
+  ], 
 };
+
