@@ -35,7 +35,7 @@ export default function Topbar() {
 	  const handleLogout = () => {
 		document.cookie = "token=; path=/; max-age=0";
 		sessionStorage.removeItem("token");
-		router.push("/");
+		router.push("/login");
 	};
 	  	
 	return (
