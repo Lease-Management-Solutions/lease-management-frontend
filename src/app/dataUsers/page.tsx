@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import { fetchUsers, createUser, deleteUser,User, changePasswordById, toggleUserStatus } from "../models/userModel";
 import { getCookie} from "../helpers/cookieHelper";
+import Notification from "../components/notificationDefault";
+
+type NotificationColor = "green" | "red" | "orange" | "blue";
+
+
 
 export default function DataUsers() {
   const [users, setUsers] = useState<User[]>([]);
@@ -36,6 +41,18 @@ export default function DataUsers() {
     fetchUserList();
   }, [statusFilter]);
 
+  const [notification, setNotification] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    color: NotificationColor;  // Garantindo que color é do tipo NotificationColor
+  }>({
+    visible: false,
+    title: "",
+    message: "",
+    color: "green", // Cor padrão
+  });
+  
   const handleCreateUser = async () => {
     const token = getCookie("token");
     if (!token) return;
@@ -43,19 +60,36 @@ export default function DataUsers() {
     try {
       
       await createUser(newUser, token);
-  
-      alert("Usuário criado com sucesso!");
-  
+      setNotification({
+        visible: true,
+        title: "Usuario ",
+        message: "Criado com sucesso!.",
+        color: "green",  // Cor verde
+      });
       setIsModalOpen(false);
   
       setNewUser({ name: "", email: "", password: "", role: "Corretor", avatar: "" });
   
+      setTimeout(() => {
+       setNotification({ visible: false, title: "", message: "", color: "green" });
+      }, 5000);
+  
+    
       const updatedUsers = await fetchUsers('active', token); // Chama novamente a função de buscar usuários
       setUsers(updatedUsers); // Atualiza o estado da lista de usuários
        setStatusFilter('active');
   
     } catch (error) {
       console.error(error);
+      setNotification({
+        visible: true,
+        title: "Erro ",
+        message: "Erro ao criar o usuário!.",
+        color: "red", 
+      });
+      setTimeout(() => {
+        setNotification({ visible: false, title: "", message: "", color: "green" });
+       }, 5000);
     }
   };
   
@@ -68,8 +102,19 @@ export default function DataUsers() {
 
     try {
       await deleteUser(userId, token);
-      alert("Usuário excluído com sucesso!");
+      setNotification({
+        visible: true,
+        title: "Detelado ",
+        message: "Usuário deletado com sucesso!",
+        color: "orange", 
+      });
+      setTimeout(() => {
+        setNotification({ visible: false, title: "", message: "", color: "green" });
+       }, 5000);
+
       setUsers(users.filter(user => user._id !== userId));
+      const updatedUsers = await fetchUsers('active', token); // Chama novamente a função de buscar usuários
+      setUsers(updatedUsers);
     } catch (error) {
       console.error(error);
     }
@@ -81,7 +126,15 @@ export default function DataUsers() {
   
     try {
       const result = await changePasswordById(userId, token);
-      alert(result.message || "Senha provisória alterada com sucesso!");
+      setNotification({
+        visible: true,
+        title: "Senha Provissória ",
+        message: "Senha alterada com sucesso!",
+        color: "blue", 
+      });
+      setTimeout(() => {
+        setNotification({ visible: false, title: "", message: "", color: "green" });
+      }, 5000);
     } catch (error) {
       console.error(error);
     }
@@ -92,7 +145,16 @@ export default function DataUsers() {
   
     try {
       const result = await toggleUserStatus(userId, token);
-      alert(result.message || "Status alterado com sucesso!");
+      setNotification({
+        visible: true,
+        title: "Detelado ",
+        message: "Usuário deletado com sucesso!",
+        color: "orange", 
+      });
+      setTimeout(() => {
+        setNotification({ visible: false, title: "", message: "", color: "green" });
+      }, 5000);
+       
     } catch (error) {
       console.error(error);
     }
@@ -324,6 +386,14 @@ export default function DataUsers() {
               </div>
             </div>
           </div>
+        )}
+
+        {notification.visible && (
+        <Notification 
+          title={notification.title} 
+          message={notification.message} 
+          color={notification.color} 
+        />
         )}
       </div>
     </div>
