@@ -12,23 +12,20 @@ type NotificationColor = "green" | "red" | "orange" | "blue";
 export default function DataUsers() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [statusFilter, setStatusFilter] = useState<'active' | 'inactive'>('active');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "Corretor", avatar: "" });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Adicionando estado para armazenar os usuários selecionados
-  
+  const [updateTrigger, setUpdateTrigger] = useState(0); 
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  
 
   useEffect(() => {
     const fetchUserList = async () => {
       const token = getCookie("token");
       if (token) {
         try {
-          const usersList = await fetchUsers(statusFilter, token);
+          const usersList = await fetchUsers(token);
           setUsers(usersList);
         } catch (error) {
           console.error(error);
@@ -37,9 +34,10 @@ export default function DataUsers() {
         }
       }
     };
-
+  
     fetchUserList();
-  }, [statusFilter]);
+  }, [ updateTrigger ]);
+  
 
   const [notification, setNotification] = useState<{
     visible: boolean;
@@ -60,24 +58,19 @@ export default function DataUsers() {
     try {
       
       await createUser(newUser, token);
+      setUpdateTrigger(prev => prev + 1);
+      setIsModalOpen(false);
+      setNewUser({ name: "", email: "", password: "", role: "Corretor", avatar: "" });
+  
       setNotification({
         visible: true,
         title: "Usuario ",
         message: "Criado com sucesso!.",
         color: "green",  // Cor verde
       });
-      setIsModalOpen(false);
-  
-      setNewUser({ name: "", email: "", password: "", role: "Corretor", avatar: "" });
-  
       setTimeout(() => {
        setNotification({ visible: false, title: "", message: "", color: "green" });
       }, 5000);
-  
-    
-      const updatedUsers = await fetchUsers('active', token); // Chama novamente a função de buscar usuários
-      setUsers(updatedUsers); // Atualiza o estado da lista de usuários
-       setStatusFilter('active');
   
     } catch (error) {
       console.error(error);
@@ -97,28 +90,28 @@ export default function DataUsers() {
   const handleDeleteUser = async (userId: string) => {
     const token = getCookie("token");
     if (!token) return;
-
+  
     if (!confirm("Tem certeza que deseja excluir este usuário?")) return;
-
+  
     try {
       await deleteUser(userId, token);
+      
       setNotification({
         visible: true,
-        title: "Detelado ",
-        message: "Usuário deletado com sucesso!",
-        color: "orange", 
+        title: "Usuário deletado",
+        message: "A página será atualizada!",
+        color: "orange",
       });
+  
       setTimeout(() => {
         setNotification({ visible: false, title: "", message: "", color: "green" });
-       }, 5000);
-
-      setUsers(users.filter(user => user._id !== userId));
-      const updatedUsers = await fetchUsers('active', token); // Chama novamente a função de buscar usuários
-      setUsers(updatedUsers);
+        window.location.reload();
+      }, 5000);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const handleChangePassword = async (userId: string) => {
     const token = getCookie("token");
@@ -126,6 +119,7 @@ export default function DataUsers() {
   
     try {
       const result = await changePasswordById(userId, token);
+      toggleDropdown();
       setNotification({
         visible: true,
         title: "Senha Provissória ",
@@ -139,26 +133,35 @@ export default function DataUsers() {
       console.error(error);
     }
   };
+
   const handleToggleStatus = async (userId: string) => {
-    const token = getCookie("token");
-    if (!token) return;
-  
-    try {
-      const result = await toggleUserStatus(userId, token);
-      setNotification({
-        visible: true,
-        title: "Detelado ",
-        message: "Usuário deletado com sucesso!",
-        color: "orange", 
-      });
-      setTimeout(() => {
-        setNotification({ visible: false, title: "", message: "", color: "green" });
-      }, 5000);
-       
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const token = getCookie("token");
+  if (!token) return;
+
+  try {
+    await toggleUserStatus(userId, token);
+    setUpdateTrigger(prev => prev + 1);
+    toggleDropdown();
+    setNotification({
+      visible: true,
+      title: "Alterado",
+      message: "Status alterado com sucesso!",
+      color: "orange",
+    });
+
+    setTimeout(() => {
+      setNotification({ visible: false, title: "", message: "", color: "green" });
+    }, 5000);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+const toggleDropdown = () => {
+  setIsDropdownOpen(!isDropdownOpen);
+};
+
   // Funções para as ações do dropdown
   const handleAction = async (action: string) => {
     const token = getCookie("token");
@@ -168,9 +171,7 @@ export default function DataUsers() {
       for (let userId of selectedUsers) {
         if (action === "password") {
           await handleChangePassword(userId);
-        } else if (action === "activate") {
-          await handleToggleStatus(userId);
-        } else if (action === "deactivate") {
+        } else if (action === "status") {
           await handleToggleStatus(userId);
         } else if (action === "delete") {
           await handleDeleteUser(userId);
@@ -228,21 +229,13 @@ export default function DataUsers() {
                 <li>
                   <a
                     href="#"
-                    onClick={() => handleAction("activate")}
+                    onClick={() => handleAction("status")}
                     className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    Ativar conta
+                    Alterar Status
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    onClick={() => handleAction("deactivate")}
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    Desativar conta
-                  </a>
-                </li>
+             
               </ul>
               <div className="py-1">
                 <a
@@ -255,22 +248,6 @@ export default function DataUsers() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Filtro de status */}
-        <div className="mb-4 flex gap-4">
-          <button
-            className={`inline-flex items-center text-gray-500 border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700 ${statusFilter === 'active' ? 'bg-gray-200 text-white' : 'bg-white dark:bg-gray-800 dark:hover:bg-gray-700 text-black dark:text-gray-400 dark:border-gray-600 dark:hover:border-gray-600'}`}
-            onClick={() => setStatusFilter('active')}
-          >
-            Ativos
-          </button>
-          <button
-            className={`inline-flex items-center text-gray-500 border border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:text-gray-400 dark:border-gray-600 dark:focus:ring-gray-700 ${statusFilter === 'inactive' ? 'bg-gray-200 text-white' : 'bg-white dark:bg-gray-800 dark:hover:bg-gray-700 text-black dark:text-gray-400 dark:border-gray-600 dark:hover:border-gray-600'}`}
-            onClick={() => setStatusFilter('inactive')}
-          >
-            Inativos
-          </button>
         </div>
 
         {/* Tabela de listagem */}
@@ -302,14 +279,7 @@ export default function DataUsers() {
                 </tr>
               </thead>
               <tbody>
-                {users.filter(user => user.status === statusFilter).length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="text-center p-4">
-                      Não há usuários {statusFilter === 'active' ? 'ativos' : 'inativos'} no momento.
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((user) => (
+                {users.map((user) => (
                   <tr
                     key={user._id}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
@@ -336,27 +306,26 @@ export default function DataUsers() {
                       </div>
                     </td>
                     <td
-  scope="row"
-  className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
->
-  <img
-    className="w-10 h-10 rounded-full"
-    src="/default-avatar.jpg" // Usar um avatar padrão se não houver
-    alt={`${user.name} avatar`}
-  />
-  <div className="ps-3">
-    <div className="text-base font-semibold">{user.name}</div>
-    <div className="font-normal text-gray-500">{user.email}</div>
-  </div>
-</td>
-
+                      scope="row"
+                      className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      <img
+                        className="w-10 h-10 rounded-full"
+                        src="/default-avatar.jpg"
+                        alt={`${user.name} avatar`}
+                      />
+                      <div className="ps-3">
+                        <div className="text-base font-semibold">{user.name}</div>
+                        <div className="font-normal text-gray-500">{user.email}</div>
+                      </div>
+                    </td>
                     <td className="px-6 py-4">{user.role}</td>
                     <td className="px-6 py-4">{user.status}</td>
                     <td className="px-6 py-4">email</td>
                   </tr>
-                  
-                )))}
+                ))}
               </tbody>
+
             </table>
           </div>
         )}

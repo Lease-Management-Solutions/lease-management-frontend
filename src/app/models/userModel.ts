@@ -7,8 +7,8 @@ export interface User {
     status: string;
   }
   
-  export const fetchUsers = async (statusFilter: 'active' | 'inactive', token: string): Promise<User[]> => {
-    const response = await fetch(`http://localhost:2000/users?status=${statusFilter}`, {
+  export const fetchUsers = async (token: string): Promise<User[]> => {
+    const response = await fetch('http://localhost:2000/users', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -60,7 +60,7 @@ export interface User {
   };
   
   export const changePasswordById = async (id: string, token: string) => {
-    const response = await fetch(`http://localhost:2000/users/changePasswordById${id}`, {
+    const response = await fetch(`http://localhost:2000/users/changePasswordById/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -78,19 +78,25 @@ export interface User {
   };
   
   export const toggleUserStatus = async (id: string, token: string) => {
-    const response = await fetch(`http://localhost:2000/users/changeUserStatusbyId${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const response = await fetch(`http://localhost:2000/users/changeUserStatusbyId/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
   
-    if (!response.ok) {
-      throw new Error("Erro ao alterar o status");
+      if (!response.ok) {
+        throw new Error("Erro ao alterar o status");
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Erro ao tentar alterar o status");
     }
-  
-    const data = await response.json();
-    return data;
   };
+  
   
