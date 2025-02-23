@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getCookie} from "../helpers/cookieHelper";
 
 
 export default function Topbar() {
@@ -10,7 +11,7 @@ export default function Topbar() {
 	const router = useRouter();
 
 	useEffect(() => {
-		const token = sessionStorage.getItem("token");
+		 const token = getCookie("token"); 
 		if (!token) return;
 	
 		const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica o JWT
@@ -34,7 +35,6 @@ export default function Topbar() {
 
 	  const handleLogout = () => {
 		document.cookie = "token=; path=/; max-age=0";
-		sessionStorage.removeItem("token");
 		router.push("/login");
 	};
 	  	

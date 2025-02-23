@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getCookie} from "../helpers/cookieHelper";
 
 export default function Dashboard() {
   const [userData, setUserData] = useState<{ id: string; role: string } | null>(null);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = getCookie("token"); 
     if (token) {
       const payload = JSON.parse(atob(token.split(".")[1]));
       setUserData({ id: payload.id, role: payload.role });
     }
-  }, []);
+  }, []); 
 
   return (
     <div className="bg-gray-200 flex flex-col items-center justify-center flex-1">

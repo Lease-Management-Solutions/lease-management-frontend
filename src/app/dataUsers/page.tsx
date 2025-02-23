@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchUsers, createUser, deleteUser,User, changePasswordById, toggleUserStatus } from "../models/userModel";
+import { getCookie} from "../helpers/cookieHelper";
 
 export default function DataUsers() {
   const [users, setUsers] = useState<User[]>([]);
@@ -12,7 +13,7 @@ export default function DataUsers() {
 
   useEffect(() => {
     const fetchUserList = async () => {
-      const token = sessionStorage.getItem("token");
+      const token = getCookie("token");
       if (token) {
         try {
           const usersList = await fetchUsers(statusFilter, token);
@@ -29,7 +30,7 @@ export default function DataUsers() {
   }, [statusFilter]);
 
   const handleCreateUser = async () => {
-    const token = sessionStorage.getItem("token");
+    const token = getCookie("token");
     if (!token) return;
   
     try {
@@ -53,7 +54,7 @@ export default function DataUsers() {
   
 
   const handleDeleteUser = async (userId: string) => {
-    const token = sessionStorage.getItem("token");
+    const token = getCookie("token");
     if (!token) return;
 
     if (!confirm("Tem certeza que deseja excluir este usuário?")) return;
@@ -68,7 +69,7 @@ export default function DataUsers() {
   };
 
   const handleChangePassword = async (userId: string) => {
-    const token = sessionStorage.getItem("token");
+    const token = getCookie("token");
     if (!token) return;
   
     try {
@@ -79,7 +80,7 @@ export default function DataUsers() {
     }
   };
   const handleToggleStatus = async (userId: string) => {
-    const token = sessionStorage.getItem("token");
+    const token = getCookie("token");
     if (!token) return;
   
     try {

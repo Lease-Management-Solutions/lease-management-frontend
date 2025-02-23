@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getCookie, deleteCookie} from "../helpers/cookieHelper";
 
 export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -16,7 +17,7 @@ export default function ChangePassword() {
     if (e.target.value !== newPassword) {
       setPasswordError("As senhas não coincidem.");
     } else {
-      setPasswordError("");
+      setPasswordError(""); 
     }
   };
 
@@ -28,7 +29,7 @@ export default function ChangePassword() {
       return;
     }
 
-    const token = sessionStorage.getItem("tempToken");
+    const token = getCookie("tempToken");
 
     if (!token) {
       alert("Token ausente. Por favor, faça login novamente.");
@@ -51,7 +52,8 @@ export default function ChangePassword() {
 
       if (response.ok) {
         alert("Senha alterada com sucesso!");
-        router.push("/"); // Redireciona para a tela de login após sucesso
+        deleteCookie("tempToken");
+        router.push("/login"); // Redireciona para a tela de login após sucesso
       } else {
         alert(data.error || "Erro ao alterar a senha.");
       }

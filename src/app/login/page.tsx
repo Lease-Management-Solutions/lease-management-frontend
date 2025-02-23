@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { setCookie } from "../helpers/cookieHelper";
 
 export default function Dashboard() {
   const [email, setEmail] = useState("");
@@ -24,11 +25,10 @@ export default function Dashboard() {
       const data = await response.json();
 
       if (response.ok && data.status) {
-        sessionStorage.setItem("token", data.token);
-        document.cookie = `token=${data.token}; path=/; max-age=21600`;
+        setCookie("token", data.token, 21600);
         router.push("/dashboard");
       } else if (response.status === 403 && data.error === "Password change required") {
-        sessionStorage.setItem("tempToken", data.tempToken);
+        setCookie("tempToken", data.tempToken, 900);
         router.push("/changePassword");
       } else if (response.status === 403 && data.error === "Usuário desativado") {
         alert("Seu usuário está desativado. Entre em contato com o administrador.");
