@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCookie, deleteCookie} from "../helpers/cookieHelper";
+import Notification from "../components/notificationDefault";
+
+type NotificationColor = "green" | "red" | "orange" | "blue"; 
 
 export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -11,7 +14,19 @@ export default function ChangePassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  
+  const [notification, setNotification] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    color: NotificationColor;  // Garantindo que color é do tipo NotificationColor
+  }>({
+    visible: false,
+    title: "",
+    message: "",
+    color: "green", // Cor padrão
+  });
+  
   const router = useRouter();
 
   // Função para verificar se as senhas coincidem
@@ -54,15 +69,42 @@ export default function ChangePassword() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Senha alterada com sucesso!");
-        deleteCookie("tempToken");
-        router.push("/login"); // Redireciona para a tela de login após sucesso
+        setNotification({
+          visible: true,
+          title: "Senha alterada com sucesso!",
+          message: "Você será redirecionado para o login.",
+          color: "green",  // Cor verde
+        });
+      
+        // Redireciona após a notificação
+        setTimeout(() => {
+          setNotification({ visible: false, title: "", message: "", color: "green" });
+          deleteCookie("tempToken");
+          router.push("/login");
+        }, 5000);
       } else {
-        alert(data.error || "Erro ao alterar a senha.");
+        setNotification({
+          visible: true,
+          title: "Erro ao alterar a senha",
+          message: data.error || "Ocorreu um erro ao tentar alterar a senha.",
+          color: "red",  
+        });
+        setTimeout(() => {
+          setNotification({ visible: false, title: "", message: "", color: "green"});
+        }, 5000);
       }
     } catch (error) {
-      console.error("Erro na requisição:", error);
-      alert("Erro ao fazer a solicitação. Verifique o console.");
+        setNotification({
+          visible: true,
+          title: "Erro de conexão",
+          message: "Ocorreu um erro ao fazer a solicitação. Verifique o console.",
+          color: "red",  // Cor vermelha para erro
+        });
+    
+        // Remove a notificação após 5 segundos
+        setTimeout(() => {
+          setNotification({ visible: false, title: "", message: "", color: "green"});
+        }, 5000);
     } finally {
       setIsSubmitting(false); // Finaliza o estado de submissão
     }
@@ -153,6 +195,14 @@ export default function ChangePassword() {
             Alterar Senha
           </button>
         </form>
+        {notification.visible && (
+        <Notification 
+          title={notification.title} 
+          message={notification.message} 
+          color={notification.color} 
+        />
+)}
+
       </div>
     </section>
   );
