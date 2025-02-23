@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setCookie } from "../helpers/cookieHelper";
+import Notification from "../components/notificationDefault";
 
 export default function Dashboard() {
   const [email, setEmail] = useState("");
   const [password, setSenha] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [notification, setNotification] = useState({ visible: false, title: "", message: "" });
 
   const router = useRouter();
 
@@ -30,15 +32,46 @@ export default function Dashboard() {
         router.push("/dashboard");
       } else if (response.status === 403 && data.error === "Password change required") {
         setCookie("tempToken", data.tempToken, 900);
-        router.push("/changePassword");
+        setNotification({
+          visible: true,
+          title: "Necessário alterar a senha",
+          message: "Você será redirecionado para troca de senha.",
+        });
+        setTimeout(() => {
+          setNotification({ visible: false, title: "", message: "" });
+          router.push("/changePassword");
+        }, 5000);
+        
       } else if (response.status === 403 && data.error === "Usuário desativado") {
-        alert("Seu usuário está desativado. Entre em contato com o administrador.");
+        setNotification({
+          visible: true,
+          title: "Seu usuário está desativado",
+          message: "Entre em contato com o administrador.",
+        });
+        setTimeout(() => {
+          setNotification({ visible: false, title: "", message: "" });
+        }, 5000);
+        
       } else {
-        alert("Erro ao fazer login.");
+        setNotification({
+          visible: true,
+          title: "Login não realizado",
+          message: "Usuário ou senha errados",
+        });
+        setTimeout(() => {
+          setNotification({ visible: false, title: "", message: "" });
+        }, 5000);
       }
     } catch (error) {
       console.error("Erro na requisição:", error);
-      alert("Erro ao fazer login. Verifique o console.");
+      setNotification({
+        visible: true,
+        title: "Erro ao fazer login",
+        message: "Verifique o console para mais detalhes",
+      });
+      setTimeout(() => {
+        setNotification({ visible: false, title: "", message: "" });
+      }, 5000);
     }
   };
 
@@ -108,6 +141,15 @@ export default function Dashboard() {
             Entrar
           </button>
         </form>
+        {/* Exibindo a notificação em caso de erro */}
+        {notification.visible && (
+          <Notification
+            color="red"
+            title={notification.title}
+            message={notification.message}
+            duration={5000}
+          />
+        )}
       </div>
     </section>
   );
