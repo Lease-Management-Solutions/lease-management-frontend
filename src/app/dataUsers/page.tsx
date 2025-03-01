@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { fetchUsers, createUser, deleteUser,User, changePasswordById, toggleUserStatus, UserType } from "../models/userModel";
 import { getCookie} from "../helpers/cookieHelper";
 import Notification from "../components/notificationDefault";
+import Link from "next/link";
 
 
 type NotificationColor = "green" | "red" | "orange" | "blue";
@@ -370,7 +371,9 @@ const toggleDropdown = () => {
                         alt={`${user.name} avatar`}
                       />
                       <div className="ps-3">
-                        <div className="text-base font-semibold">{user.name}</div>
+                      <Link href={`/dataUser/User/${user._id}`} className="text-base font-semiboldgit">
+                        {user.name}
+                      </Link>
                         <div className="font-normal text-gray-500">{user.email}</div>
                       </div>
                     </td>
