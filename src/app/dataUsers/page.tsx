@@ -16,28 +16,6 @@ export default function DataUsers() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]); // Adicionando estado para armazenar os usuários selecionados
   const [updateTrigger, setUpdateTrigger] = useState(0); 
-  const empityUser = {
-    name: "",
-    cpf: "",
-    rg: "",
-    issuingAuthority: "",
-    rgIssuingState: "",
-    address: {
-      street: "",
-      number: "",
-      neighborhood: "",
-      city: "",
-      state: "",
-      country: ""
-    },
-    email: "",
-    password: "",
-    maritalStatus: "Single",
-    role: "Corretor",
-    nationality: "",
-    avatar: "",
-    phones:[]
-  }; 
   const [newUser, setNewUser] = useState<UserType>({
     name: "",
     cpf: "",
@@ -398,7 +376,7 @@ const toggleDropdown = () => {
                     </td>
                     <td className="px-6 py-4">{user.role}</td>
                     <td className="px-6 py-4">{user.status}</td>
-                    <td className="px-6 py-4">email</td>
+                    <td className="px-6 py-4">{user.phones?.[0]?.number ?? "Sem telefone"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -414,306 +392,296 @@ const toggleDropdown = () => {
 
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-  <div className="relative p-4 w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl max-h-screen bg-gray-800 rounded-lg shadow-lg overflow-y-auto">
-    <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
-      <h3 className="text-xl font-semibold text-white">
-          Criar Novo Usuário
-        </h3>
-        <button
-          type="button"
-          className="text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg text-sm w-8 h-8 flex justify-center items-center dark:hover:bg-gray-600"
-          onClick={() => {
-            setIsModalOpen(false);
-            setNewUser({
-              name: "",
-              cpf: "",
-              rg: "",
-              issuingAuthority: "",
-              rgIssuingState: "",
-              address: {
-                street: "",
-                number: "",
-                neighborhood: "",
-                city: "",
-                state: "",
-                country: ""
-              },
-              email: "",
-              password: "",
-              maritalStatus: "Single",
-              role: "Corretor",
-              nationality: "",
-              avatar: "",
-              phones:[]
-            });      
-          }}
-        >
-          <svg
-            className="w-3 h-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 14 14"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            <div className="relative p-4 w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl max-h-screen bg-gray-800 rounded-lg shadow-lg overflow-y-auto">
+              <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600 border-gray-200">
+                <h3 className="text-xl font-semibold text-white">
+                    Criar Novo Usuário
+                  </h3>
+                  <button
+                    type="button"
+                    className="text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg text-sm w-8 h-8 flex justify-center items-center dark:hover:bg-gray-600"
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      setNewUser({
+                        name: "",
+                        cpf: "",
+                        rg: "",
+                        issuingAuthority: "",
+                        rgIssuingState: "",
+                        address: {
+                          street: "",
+                          number: "",
+                          neighborhood: "",
+                          city: "",
+                          state: "",
+                          country: ""
+                        },
+                        email: "",
+                        password: "",
+                        maritalStatus: "Single",
+                        role: "Corretor",
+                        nationality: "",
+                        avatar: "",
+                        phones:[]
+                      });      
+                    }}
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 14 14"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                      />
+                    </svg>
+                    <span className="sr-only">Close modal</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+                  <input
+                    type="text"
+                    placeholder="Nome"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.name}
+                    onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  />
+
+                  <input
+                    type="email"
+                    id="email"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Digite seu e-mail"
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                    required
+                  />
+
+                  <input
+                    type="password"
+                    placeholder="Senha"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="CPF"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.cpf}
+                    onChange={(e) => setNewUser({ ...newUser, cpf: e.target.value })}
+                  />
+                
+                  <input
+                    type="text"
+                    placeholder="RG"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.rg}
+                    onChange={(e) => setNewUser({ ...newUser, rg: e.target.value })}
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Autoridade de Emissão do RG"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.issuingAuthority}
+                    onChange={(e) => setNewUser({ ...newUser, issuingAuthority: e.target.value })}
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Estado de Emissão do RG"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.rgIssuingState}
+                    onChange={(e) => setNewUser({ ...newUser, rgIssuingState: e.target.value })}
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Nacionalidade"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.nationality}
+                    onChange={(e) => setNewUser({ ...newUser, nationality: e.target.value })}
+                  />
+
+                  <select
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    value={newUser.maritalStatus}
+                    onChange={(e) => {
+                      const value = e.target.value as "Single" | "Married" | "Divorced" | "Widowed" | "Legally Separated" | "Stable Union";
+                      setNewUser({ ...newUser, maritalStatus: value });
+                    }}
+                  >
+                    <option value="Single">Solteiro</option>
+                    <option value="Married">Casado</option>
+                    <option value="Divorced">Divorciado</option>
+                    <option value="Widowed">Viúvo</option>
+                    <option value="Legally Separated">Separado Judicialmente</option>
+                    <option value="Stable Union">União Estável</option>
+                  </select>
+                  <div className="col-span-2 text-black font-semibold mb-2">Telefones</div>
+                    {newUser.phones?.map((phone, index) => (
+                      <div key={index} className="flex gap-2">
+                        <select
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                          value={phone.type}
+                          onChange={(e) => {
+                            const updatedPhones = [...(newUser.phones ?? [])];
+                            updatedPhones[index].type = e.target.value as "mobile" | "home" | "work";
+                            setNewUser({ ...newUser, phones: updatedPhones });
+                          }}
+                        >
+                          <option value="mobile">Celular</option>
+                          <option value="home">Residencial</option>
+                          <option value="work">Trabalho</option>
+                        </select>
+
+                        <input
+                          type="text"
+                          placeholder="Número"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                          value={phone.number}
+                          onChange={(e) => {
+                            const updatedPhones = [...(newUser.phones || [])];
+                            updatedPhones[index].number = e.target.value;
+                            setNewUser({ ...newUser, phones: updatedPhones });
+                          }}
+                        />
+                      </div>
+                    ))}
+
+                    <button
+                      onClick={addPhone}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2"
+                    >
+                      + Telefone
+                    </button>
+                    <div className="col-span-2 text-black font-semibold mb-2">Endereço</div>
+                    <input
+                      type="text"
+                      placeholder="Rua"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.address.street}
+                      onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, street: e.target.value } })}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Número"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.address.number}
+                      onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, number: e.target.value } })}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Bairro"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.address.neighborhood}
+                      onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, neighborhood: e.target.value } })}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Cidade"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.address.city}
+                      onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, city: e.target.value } })}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Estado"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.address.state}
+                      onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, state: e.target.value } })}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="País"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.address.country}
+                      onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, country: e.target.value } })}
+                    />
+
+                    <select
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.role}
+                      onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                    >
+                      <option value="Corretor">Corretor</option>
+                      <option value="Administrativo">Administrativo</option>
+                      <option value="Financeiro">Financeiro</option>
+                      <option value="SuperUsuario">SuperUsuario</option>
+                    </select>
+
+                    <input
+                      type="file"
+                      placeholder="Link do Avatar"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                      value={newUser.avatar}
+                      onChange={(e) => setNewUser({ ...newUser, avatar: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="flex justify-end mt-4">
+                    <button
+                      onClick={() =>{
+                        setIsModalOpen(false);
+                        setNewUser({
+                          name: "",
+                          cpf: "",
+                          rg: "",
+                          issuingAuthority: "",
+                          rgIssuingState: "",
+                          address: {
+                            street: "",
+                            number: "",
+                            neighborhood: "",
+                            city: "",
+                            state: "",
+                            country: ""
+                          },
+                          email: "",
+                          password: "",
+                          maritalStatus: "Single",
+                          role: "Corretor",
+                          nationality: "",
+                          avatar: "",
+                          phones:[]
+                        });      
+                      }}
+                      className="bg-gray-400 text-white px-4 py-2 rounded-md mr-2"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={handleCreateUser}
+                      className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                    >
+                      Criar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {notification.visible && (
+            <Notification 
+              title={notification.title} 
+              message={notification.message} 
+              color={notification.color} 
             />
-          </svg>
-          <span className="sr-only">Close modal</span>
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-        <input
-          type="text"
-          placeholder="Nome"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.name}
-          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-        />
-
-        <input
-          type="email"
-          id="email"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Digite seu e-mail"
-          value={newUser.email}
-          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-          required
-        />
-
-        <input
-          type="password"
-          placeholder="Senha"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="CPF"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.cpf}
-          onChange={(e) => setNewUser({ ...newUser, cpf: e.target.value })}
-        />
-       
-        <input
-          type="text"
-          placeholder="RG"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.rg}
-          onChange={(e) => setNewUser({ ...newUser, rg: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="Autoridade de Emissão do RG"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.issuingAuthority}
-          onChange={(e) => setNewUser({ ...newUser, issuingAuthority: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="Estado de Emissão do RG"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.rgIssuingState}
-          onChange={(e) => setNewUser({ ...newUser, rgIssuingState: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="Nacionalidade"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.nationality}
-          onChange={(e) => setNewUser({ ...newUser, nationality: e.target.value })}
-        />
-
-        <select
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.maritalStatus}
-          onChange={(e) => {
-            const value = e.target.value as "Single" | "Married" | "Divorced" | "Widowed" | "Legally Separated" | "Stable Union";
-            setNewUser({ ...newUser, maritalStatus: value });
-          }}
-        >
-          <option value="Single">Solteiro</option>
-          <option value="Married">Casado</option>
-          <option value="Divorced">Divorciado</option>
-          <option value="Widowed">Viúvo</option>
-          <option value="Legally Separated">Separado Judicialmente</option>
-          <option value="Stable Union">União Estável</option>
-        </select>
-        
-        <div className="col-span-2 text-black font-semibold mb-2">Telefones</div>
-
-
-
-{newUser.phones?.map((phone, index) => (
-  <div key={index} className="flex gap-2">
-    <select
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-      value={phone.type}
-      onChange={(e) => {
-        const updatedPhones = [...(newUser.phones ?? [])];
-        updatedPhones[index].type = e.target.value as "mobile" | "home" | "work";
-        setNewUser({ ...newUser, phones: updatedPhones });
-      }}
-    >
-      <option value="mobile">Celular</option>
-      <option value="home">Residencial</option>
-      <option value="work">Trabalho</option>
-    </select>
-
-    <input
-      type="text"
-      placeholder="Número"
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-      value={phone.number}
-      onChange={(e) => {
-        const updatedPhones = [...(newUser.phones || [])];
-        updatedPhones[index].number = e.target.value;
-        setNewUser({ ...newUser, phones: updatedPhones });
-      }}
-    />
-  </div>
-))}
-
-<button
-  onClick={addPhone}
-  className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2"
->
-  + Telefone
-</button>
-
-
-
-        <div className="col-span-2 text-black font-semibold mb-2">Endereço</div>
-
-        <input
-          type="text"
-          placeholder="Rua"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.address.street}
-          onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, street: e.target.value } })}
-        />
-
-        <input
-          type="text"
-          placeholder="Número"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.address.number}
-          onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, number: e.target.value } })}
-        />
-
-        <input
-          type="text"
-          placeholder="Bairro"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.address.neighborhood}
-          onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, neighborhood: e.target.value } })}
-        />
-
-        <input
-          type="text"
-          placeholder="Cidade"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.address.city}
-          onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, city: e.target.value } })}
-        />
-
-        <input
-          type="text"
-          placeholder="Estado"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.address.state}
-          onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, state: e.target.value } })}
-        />
-
-        <input
-          type="text"
-          placeholder="País"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.address.country}
-          onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, country: e.target.value } })}
-        />
-
-        <select
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.role}
-          onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-        >
-          <option value="Corretor">Corretor</option>
-          <option value="Administrativo">Administrativo</option>
-          <option value="Financeiro">Financeiro</option>
-          <option value="SuperUsuario">SuperUsuario</option>
-        </select>
-
-        <input
-          type="file"
-          placeholder="Link do Avatar"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          value={newUser.avatar}
-          onChange={(e) => setNewUser({ ...newUser, avatar: e.target.value })}
-        />
-      </div>
-
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={() =>{
-            setIsModalOpen(false);
-            setNewUser({
-              name: "",
-              cpf: "",
-              rg: "",
-              issuingAuthority: "",
-              rgIssuingState: "",
-              address: {
-                street: "",
-                number: "",
-                neighborhood: "",
-                city: "",
-                state: "",
-                country: ""
-              },
-              email: "",
-              password: "",
-              maritalStatus: "Single",
-              role: "Corretor",
-              nationality: "",
-              avatar: "",
-              phones:[]
-            });      
-          }}
-          className="bg-gray-400 text-white px-4 py-2 rounded-md mr-2"
-        >
-          Cancelar
-        </button>
-        <button
-          onClick={handleCreateUser}
-          className="bg-gray-500 text-white px-4 py-2 rounded-md"
-        >
-          Criar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-
-
-        {notification.visible && (
-        <Notification 
-          title={notification.title} 
-          message={notification.message} 
-          color={notification.color} 
-        />
-        )}
+            )}
       </div>
     </div>
   );

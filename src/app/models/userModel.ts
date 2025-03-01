@@ -5,6 +5,10 @@ export interface User {
     email: string;
     role: string;
     status: string;
+    phones?: { 
+      type: "mobile" | "home" | "work"; 
+      number: string;
+    }[];
   }
   
   export type UserType = {
@@ -27,9 +31,9 @@ export interface User {
     role: string;
     nationality: string;
     avatar: string;
-    phones?: { // Torna o campo de telefones opcional
-      type: "mobile" | "home" | "work"; // Tipo de telefone
-      number: string; // Número do telefone
+    phones?: { 
+      type: "mobile" | "home" | "work"; 
+      number: string;
     }[];
   }
 
