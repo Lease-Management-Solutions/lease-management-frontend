@@ -7,6 +7,32 @@ export interface User {
     status: string;
   }
   
+  export type UserType = {
+    name: string;
+    cpf: string;
+    rg: string;
+    issuingAuthority: string;
+    rgIssuingState: string;
+    address: {
+      street: string;
+      number: string;
+      neighborhood: string;
+      city: string;
+      state: string;
+      country: string;
+    };
+    email: string;
+    password: string;
+    maritalStatus: "Single"| "Married" |"Divorced" | "Widowed" | "Legally Separated"| "Stable Union";
+    role: string;
+    nationality: string;
+    avatar: string;
+    phones?: { // Torna o campo de telefones opcional
+      type: "mobile" | "home" | "work"; // Tipo de telefone
+      number: string; // Número do telefone
+    }[];
+  }
+
   export const fetchUsers = async (token: string): Promise<User[]> => {
     const response = await fetch('http://localhost:2000/users', {
       headers: {
@@ -27,14 +53,23 @@ export interface User {
     }
   };
   
-  export const createUser = async (newUser: { name: string; email: string; password: string; role: string; avatar: string }, token: string) => {
+  export const createUser = async (newUser: UserType, token: string) => {
+    const payload = JSON.parse(atob(token.split(".")[1])); 
+    const userId = payload.id;
+    
+    const userWithCreatorInfo = {
+      ...newUser,
+      createdBy: userId,  
+      updatedBy: userId,  
+    };
+
     const response = await fetch("http://localhost:2000/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(newUser),
+      body: JSON.stringify(userWithCreatorInfo),
     });
   
     if (!response.ok) {
@@ -43,6 +78,7 @@ export interface User {
   
     return await response.json();
   };
+  
   
   export const deleteUser = async (userId: string, token: string) => {
     const response = await fetch(`http://localhost:2000/users/${userId}`, {
