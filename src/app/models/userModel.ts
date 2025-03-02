@@ -1,15 +1,37 @@
 
 export interface User {
-    _id: string;
-    name: string;
-    email: string;
-    role: string;
-    status: string;
-    phones?: { 
-      type: "mobile" | "home" | "work"; 
-      number: string;
-    }[];
-  }
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  phones?: { 
+    type: "mobile" | "home" | "work"; 
+    number: string;
+  }[];
+  cpf: string;
+  rg: string;
+  issuingAuthority: string;
+  rgIssuingState: string;
+  address: {
+    street: string;
+    number: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+  password: string;
+  maritalStatus: "Single" | "Married" | "Divorced" | "Widowed" | "Legally Separated" | "Stable Union";
+  nationality: string;
+  avatar?: string;
+  mustChangePassword: boolean;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
   
   export type UserType = {
     name: string;
@@ -56,6 +78,27 @@ export interface User {
       throw new Error("A resposta da API não contém um array válido de usuários");
     }
   };
+  
+  export const fetchUserById = async (id: string, token: string): Promise<User> => {
+    const response = await fetch(`http://localhost:2000/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error("Erro ao carregar usuário");
+    }
+  
+    const data = await response.json();
+  
+    if (data.user) {
+      return data.user;
+    } else {
+      throw new Error("Usuário não encontrado na resposta da API");
+    }
+  };
+
   
   export const createUser = async (newUser: UserType, token: string) => {
     const payload = JSON.parse(atob(token.split(".")[1])); 

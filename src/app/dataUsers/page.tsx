@@ -367,7 +367,7 @@ const toggleDropdown = () => {
                     >
                       <img
                         className="w-10 h-10 rounded-full"
-                        src="/default-avatar.jpg"
+                        src={user.avatar || "/default-avatar.jpg"}
                         alt={`${user.name} avatar`}
                       />
                       <div className="ps-3">
