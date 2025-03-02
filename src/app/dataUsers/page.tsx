@@ -371,7 +371,7 @@ const toggleDropdown = () => {
                         alt={`${user.name} avatar`}
                       />
                       <div className="ps-3">
-                      <Link href={`/dataUser/User/${user._id}`} className="text-base font-semiboldgit">
+                      <Link href={`/dataUsers/${user._id}`} className="text-base font-semiboldgit">
                         {user.name}
                       </Link>
                         <div className="font-normal text-gray-500">{user.email}</div>
