@@ -2,13 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { fetchUserById, User } from "../../models/userModel";
+import { fetchUserById, updateUser, User } from "../../models/userModel";
 import { getCookie } from "../../helpers/cookieHelper";
+import Notification from "@/app/components/notificationDefault";
+
+
+type NotificationColor = "green" | "red" | "orange" | "blue";
 
 export default function Usuario() {
   const { id } = useParams();
   const userId = Array.isArray(id) ? id[0] : id;
   const [user, setUser] = useState<User | null>(null);
+  const [updateTrigger, setUpdateTrigger] = useState(0); 
   const [newUser, setNewUser] = useState<User>({
     _id: "", // Preencha com valor vazio ou com um valor válido
     name: "",
@@ -67,7 +72,19 @@ export default function Usuario() {
     if (id) {
       fetchUser();
     }
-  }, [userId]);
+  }, [userId, updateTrigger]);
+
+  const [notification, setNotification] = useState<{
+      visible: boolean;
+      title: string;
+      message: string;
+      color: NotificationColor;  // Garantindo que color é do tipo NotificationColor
+    }>({
+      visible: false,
+      title: "",
+      message: "",
+      color: "green", // Cor padrão
+    });
 
   if (loading) {
     return <p>Carregando...</p>;
@@ -77,55 +94,43 @@ export default function Usuario() {
     return <p>Usuário não encontrado.</p>;
   }
 
-  const handleUpdateUser = async () => {
+  const handleUpdateUser = async (userId: string, userData: any) => {
+    const token = getCookie("token");
+    if (!token) return;
+  
     try {
-      const response = await fetch(`/api/users/${newUser._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
+      await updateUser(userId, token, userData);
+      setUpdateTrigger(prev => prev + 1);
+      setIsModalOpen(false);
+  
+      setNotification({
+        visible: true,
+        title: "Usuário",
+        message: "Atualizado com sucesso!",
+        color: "green",
       });
-
-      if (response.ok) {
-        setIsModalOpen(false);
-        setNewUser({
-          _id: "", // Adicionando o _id
-          name: "",
-          cpf: "",
-          rg: "",
-          issuingAuthority: "",
-          rgIssuingState: "",
-          address: {
-            street: "",
-            number: "",
-            neighborhood: "",
-            city: "",
-            state: "",
-            country: "",
-          },
-          email: "",
-          password: "",
-          maritalStatus: "Single",
-          role: "Corretor",
-          nationality: "",
-          avatar: "",
-          phones: [],
-          status: "active", // Exemplo de valor para status
-          mustChangePassword: false, // Exemplo de valor para mustChangePassword
-          createdAt: new Date().toISOString(), // Exemplo de valor para createdAt
-          createdBy: "admin", // Exemplo de valor para createdBy
-          updatedAt: new Date().toISOString(), // Exemplo de valor para updatedAt
-          updatedBy: "admin", // Exemplo de valor para updatedBy
-        });
-      } else {
-        alert("Erro ao atualizar usuário");
-      }
+  
+      setTimeout(() => {
+        setNotification({ visible: false, title: "", message: "", color: "green" });
+      }, 5000);
+  
     } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
-      alert("Erro ao atualizar usuário");
+      console.error(error);
+      setNotification({
+        visible: true,
+        title: "Erro",
+        message: "Erro ao atualizar o usuário!",
+        color: "red",
+      });
+  
+      setTimeout(() => {
+        setNotification({ visible: false, title: "", message: "", color: "red" });
+      }, 5000);
     }
   };
+  
+  
+  
 
   return (
     <div className="bg-gray-100 text-black min-h-screen flex flex-col items-center py-10">
@@ -307,6 +312,22 @@ export default function Usuario() {
           </select>
         </div>
 
+        {/* Role */}
+<div>
+  <label className="block text-white font-semibold mb-2">Role</label>
+  <select
+    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+    value={newUser.role}
+    onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+  >
+    <option value="Corretor">Corretor</option>
+    <option value="Administrativo">Administrativo</option>
+    <option value="Financeiro">Financeiro</option>
+    <option value="SuperUsuario">SuperUsuario</option>
+  </select>
+</div>
+
+
 {/* Telefones */}
 <div className="col-span-2 text-white font-semibold mb-2">Telefones</div>
 {newUser.phones?.map((phone, index) => (
@@ -474,19 +495,29 @@ export default function Usuario() {
           Cancelar
         </button>
         <button
-          
-          className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
-        >
-          Salvar
-        </button>
+  onClick={() => handleUpdateUser(user._id, newUser)} // Passa o user._id e os dados do formulário (newUser)
+  className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+>
+  Salvar
+</button>
+
+
       </div>
     </div>
   </div>
 )}
+          {notification.visible && (
+            <Notification 
+              title={notification.title} 
+              message={notification.message} 
+              color={notification.color} 
+            />
+            )};
 
 
 
 
     </div>
+    
   );
 }

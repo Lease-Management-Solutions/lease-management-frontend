@@ -126,6 +126,42 @@ export interface User {
     return await response.json();
   };
   
+  export const updateUser = async (userId: string, token: string, userData: any) => {
+    const payload = JSON.parse(atob(token.split(".")[1])); 
+    const updatedBy = payload.id; // Pegando o id do usuário para o campo updatedBy
+  
+    // Adicionando os dados que já temos (data e updatedBy) aos dados enviados
+    const userWithUpdateInfo = {
+      ...userData, // Adiciona os dados do modal
+      updatedAt: new Date().toISOString(),
+      updatedBy: updatedBy,
+    };
+  
+    console.log("Enviando dados para a requisição:", userWithUpdateInfo); // Verificação de dados antes de enviar
+  
+    const response = await fetch(`http://localhost:2000/users/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(userWithUpdateInfo),
+    });
+  
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Erro na requisição:", errorText); // Log de erro para depuração
+      throw new Error("Erro ao atualizar usuário");
+    }
+  
+    const result = await response.json();
+    console.log("Resposta da API:", result); // Verifique o que a API está retornando
+    return result;
+  };
+  
+  
+  
+  
   
   export const deleteUser = async (userId: string, token: string) => {
     const response = await fetch(`http://localhost:2000/users/${userId}`, {
