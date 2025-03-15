@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SearchInput from "../components/searchInput";
+import Modal from "../components/modals/modalSteper";
 
 export default function ContractsDashboard() {
   const [contracts, setContracts] = useState([
@@ -24,12 +25,105 @@ export default function ContractsDashboard() {
       taxaAdm: "R$ 200,00",
     },
   ]);
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Definindo o conteúdo das páginas
+  const steps = [
+    {
+      title: "Imóvel",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="property" className="text-black">Imóvel</label>
+            <select
+              id="property"
+              name="property"
+              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
+            >
+              <option value="">Selecione o imóvel</option>
+              <option value="property1">Imóvel 1</option>
+              <option value="property2">Imóvel 2</option>
+              <option value="property3">Imóvel 3</option>
+            </select>
+          </div>
+  
+          <div>
+            <label htmlFor="ownerName1" className="text-black">Nome do Proprietário 1</label>
+            <input
+              id="ownerName1"
+              type="text"
+              className="bg-white text-gray-900 border border-gray-600 p-2 rounded w-full"
+              placeholder="Digite o nome do proprietário 1"
+            />
+          </div>
+  
+          <div>
+            <label htmlFor="ownerName2" className="text-white">Nome do Proprietário 2</label>
+            <input
+              id="ownerName2"
+              type="text"
+              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
+              placeholder="Digite o nome do proprietário 2"
+            />
+          </div>
+  
+          <div>
+            <label htmlFor="typeContract" className="text-white">Tipo de Contrato</label>
+            <select
+              id="typeContract"
+              name="typeContract"
+              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
+            >
+              <option value="">Selecione o tipo de contrato</option>
+              <option value="type1">Residencial</option>
+              <option value="type2">Não Residencial</option>
+              <option value="type3">Comercial</option>
+            </select>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Locatária",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="tenantName" className="text-white">Nome da Locatária</label>
+            <input
+              id="tenantName"
+              type="text"
+              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
+              placeholder="Digite o nome da locatária"
+            />
+          </div>
+  
+          <div>
+            <label htmlFor="tenantCpf" className="text-white">CPF da Locatária</label>
+            <input
+              id="tenantCpf"
+              type="text"
+              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
+              placeholder="Digite o CPF da locatária"
+            />
+          </div>
+        </div>
+      ),
+    },
+  ];
+  
+  
 
   return (
     <div className="p-4 space-y-6 text-black">
       {/* Barra de pesquisa e botão */}
       <div className="flex items-center gap-4">
-        <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded">
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded"
+          onClick={toggleModal}
+        >
           Novo Contrato
         </button>
 
@@ -81,10 +175,12 @@ export default function ContractsDashboard() {
           </table>
         </div>
       </div>
+      
+  
     </div>
   );
 }
-
+  
 // Componente para os painéis de informações
 function InfoPanel({ title, data }: { title: string; data: { label: string; value: number }[] }) {
   return (
