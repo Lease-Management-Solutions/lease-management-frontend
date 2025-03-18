@@ -3,7 +3,7 @@ import React, { useState } from "react";
 interface ModalStepperProps {
   isOpen: boolean;
   onClose: () => void;
-  steps: StepConfig[];
+  steps: StepConfig[] ;
   className?: string;
 }
 

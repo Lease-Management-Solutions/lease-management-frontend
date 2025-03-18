@@ -5,9 +5,10 @@ interface SelectProps {
   options: { id: string; address: string }[];
   className?: [string, string, string]; // [largura, altura, tamanho da fonte]
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  value?: string;
 }
 
-const SelectBase: React.FC<SelectProps> = ({ children, options, className, onChange }) => {
+const SelectBase: React.FC<SelectProps> = ({ children, options, className, onChange, value }) => {
   const [width, height, fontSize] = className || ["w-full", "p-2.5", "text-sm"];
 
   return (
@@ -16,12 +17,12 @@ const SelectBase: React.FC<SelectProps> = ({ children, options, className, onCha
         {children}
       </label>
       <select
-        className={`bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block ${width} ${height} ${fontSize}`}
+        className={`bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block ${width} ${height} ${fontSize}`}
         onChange={onChange}
-        defaultValue=""
+        value={value}
       >
         <option value="" disabled>
-          Selecione o imóvel
+          Selecione
         </option>
         {options.map((option) => (
           <option key={option.id} value={option.id}>

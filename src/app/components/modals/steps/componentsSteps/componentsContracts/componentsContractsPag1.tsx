@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import SelectBase from "@/app/components/forms/inputs/select/selectBase";
-import { EscolhaImovelProps } from "../stepsContract";
+
 import ButtonGreen from "@/app/components/forms/inputs/buttons/ButtonGreen";
 import { getCookie } from "@/app/helpers/cookieHelper";
 import InputWithPercentage from "@/app/components/forms/inputs/text/InputWithPercentage";
+import { useContractContext } from "@/app/contexts/ContractContext";
+
+
+
+// ------------------------- PAG 1 -------------------------
+
 
 interface PropertyOption {
   id: string;
@@ -27,11 +33,9 @@ enum LeaseTypeEnum {
   ParceriaRural = "Parceria Rural",
 }
 
-export const EscolhaImovel: React.FC<EscolhaImovelProps> = ({ setIsPropertyModalOpen }) => {
+export const EscolhaImovel: React.FC<{ setIsPropertyModalOpen: React.Dispatch<React.SetStateAction<boolean>> }> = ({ setIsPropertyModalOpen }) => {
+  const { selectedPropertyId, setSelectedPropertyId, owners, setOwners, leaseType, setLeaseType } = useContractContext();
   const [options, setOptions] = useState<PropertyOption[]>([]);
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
-  const [owners, setOwners] = useState<Owner[]>([]);
-  const [leaseType, setLeaseType] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -100,10 +104,12 @@ export const EscolhaImovel: React.FC<EscolhaImovelProps> = ({ setIsPropertyModal
     id: type,
     address: type,
   }));
+
+
   return (
     <div className="flex flex-col items-center gap-4 overflow-y-auto max-h-full"> 
-      <div className="flex items-center gap-2 w-full mt-10">
-        <SelectBase options={options} className={["w-full", "p-2.5", "text-sm"]} onChange={handleSelectChange}>
+      <div className="flex items-center gap-2 w-full mt-7">
+        <SelectBase options={options} className={["w-full", "p-2.5", "text-sm"]} onChange={handleSelectChange} value={selectedPropertyId || ""}>
           Escolha o imóvel
         </SelectBase>
         <div className="self-end">
@@ -113,12 +119,12 @@ export const EscolhaImovel: React.FC<EscolhaImovelProps> = ({ setIsPropertyModal
         </div>
       </div>
       {owners.length > 0 && owners.map((owner, index) => (
-        <div key={owner.id} className="flex items-center gap-2 w-full mt-4">
+        <div key={owner.id} className="flex items-center gap-2 w-full mt-3">
           <InputWithPercentage label={`Proprietário ${index + 1}`} value={owner.name} percentage={owner.percentage} />
         </div>
       ))}
-      <div className="flex items-center gap-2 w-full mt-10">
-        <SelectBase options={leaseTypeOptions} className={["w-full", "p-2.5", "text-sm"]} onChange={handleLeaseTypeChange}>
+      <div className="self-start gap-2 w-60 mt-3">
+        <SelectBase options={leaseTypeOptions} className={["w-full", "p-2.5", "text-sm"]} onChange={handleLeaseTypeChange} value={leaseType || ""}>
           Escolha o tipo de contrato
         </SelectBase>
       </div>

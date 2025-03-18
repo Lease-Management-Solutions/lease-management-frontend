@@ -1,15 +1,12 @@
 import React from 'react';
 import { StepConfig } from '../modalSteper';
 import ButtonGreen from "@/app/components/forms/inputs/buttons/ButtonGreen";
-import { EscolhaImovel } from './componentsSteps/componentsContracts';
+import { EscolhaImovel } from './componentsSteps/componentsContracts/componentsContractsPag1';
 
-export interface EscolhaImovelProps {
-  setIsPropertyModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+
 interface EscolhaInquilinoProps {
   setIsTenantModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
 
 const EscolhaInquilino: React.FC<EscolhaInquilinoProps> = ({ setIsTenantModalOpen }) => (
   <div>

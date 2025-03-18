@@ -2,9 +2,25 @@
 
 import { useState } from "react";
 import SearchInput from "../components/searchInput";
-import Modal from "../components/modals/modalSteper";
+import ButtonGreen from "../components/forms/inputs/buttons/ButtonGreen";
+import { ContractProvider } from "../contexts/ContractContext";
+import ModalStepper from "../components/modals/modalSteper";
+import getStepsContract from "../components/modals/steps/stepsContract";
+import { PropertyProvider } from "../contexts/PropertyContext";
+import getStepsProperty from "../components/modals/steps/stepsProperty";
+import { OwnerProvider } from "../contexts/OwnerContext";
+import stepsOwner from "../components/modals/steps/stepsOwner";
+import { TenantProvider } from "../contexts/TenantContext";
+import stepsTenant from "../components/modals/steps/stepsTenant";
+
 
 export default function ContractsDashboard() {
+
+    const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+    const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
+    const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
+    const [isTenantModalOpen, setIsTenantModalOpen] = useState(false);
+  
   const [contracts, setContracts] = useState([
     {
       id: "123456",
@@ -25,107 +41,17 @@ export default function ContractsDashboard() {
       taxaAdm: "R$ 200,00",
     },
   ]);
-  const [isOpen, setIsOpen] = useState(false);
-  const toggleModal = () => {
-    setIsOpen(!isOpen);
-  };
-
-  // Definindo o conteúdo das páginas
-  const steps = [
-    {
-      title: "Imóvel",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="property" className="text-black">Imóvel</label>
-            <select
-              id="property"
-              name="property"
-              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
-            >
-              <option value="">Selecione o imóvel</option>
-              <option value="property1">Imóvel 1</option>
-              <option value="property2">Imóvel 2</option>
-              <option value="property3">Imóvel 3</option>
-            </select>
-          </div>
-  
-          <div>
-            <label htmlFor="ownerName1" className="text-black">Nome do Proprietário 1</label>
-            <input
-              id="ownerName1"
-              type="text"
-              className="bg-white text-gray-900 border border-gray-600 p-2 rounded w-full"
-              placeholder="Digite o nome do proprietário 1"
-            />
-          </div>
-  
-          <div>
-            <label htmlFor="ownerName2" className="text-white">Nome do Proprietário 2</label>
-            <input
-              id="ownerName2"
-              type="text"
-              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
-              placeholder="Digite o nome do proprietário 2"
-            />
-          </div>
-  
-          <div>
-            <label htmlFor="typeContract" className="text-white">Tipo de Contrato</label>
-            <select
-              id="typeContract"
-              name="typeContract"
-              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
-            >
-              <option value="">Selecione o tipo de contrato</option>
-              <option value="type1">Residencial</option>
-              <option value="type2">Não Residencial</option>
-              <option value="type3">Comercial</option>
-            </select>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Locatária",
-      content: (
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="tenantName" className="text-white">Nome da Locatária</label>
-            <input
-              id="tenantName"
-              type="text"
-              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
-              placeholder="Digite o nome da locatária"
-            />
-          </div>
-  
-          <div>
-            <label htmlFor="tenantCpf" className="text-white">CPF da Locatária</label>
-            <input
-              id="tenantCpf"
-              type="text"
-              className="bg-gray-700 text-white border border-gray-600 p-2 rounded w-full"
-              placeholder="Digite o CPF da locatária"
-            />
-          </div>
-        </div>
-      ),
-    },
-  ];
-  
   
 
   return (
+
+
     <div className="p-4 space-y-6 text-black">
       {/* Barra de pesquisa e botão */}
-      <div className="flex items-center gap-4">
-        <button
-          className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded"
-          onClick={toggleModal}
-        >
-          Novo Contrato
-        </button>
+      <div className="flex items-center gap-2">
+      <ButtonGreen onClick={() => setIsContractModalOpen(true)}> 
+        Novo Contrato
+      </ButtonGreen>
 
         <SearchInput />
       </div>
@@ -176,7 +102,46 @@ export default function ContractsDashboard() {
         </div>
       </div>
       
-  
+      {/* modal de cadastro */}
+      {isContractModalOpen && (
+        <ContractProvider>
+          <ModalStepper
+            isOpen={isContractModalOpen}
+            onClose={() => setIsContractModalOpen(false)}
+            steps={getStepsContract(setIsPropertyModalOpen, setIsTenantModalOpen)}
+          />
+        </ContractProvider>
+      )}
+
+      {isPropertyModalOpen && (
+        <PropertyProvider>
+          <ModalStepper
+            isOpen={isPropertyModalOpen}
+            onClose={() => setIsPropertyModalOpen(false)}
+            steps={getStepsProperty(setIsOwnerModalOpen)}
+          />
+        </PropertyProvider>
+      )}
+
+      {isOwnerModalOpen && (
+        <OwnerProvider>
+          <ModalStepper
+            isOpen={isOwnerModalOpen}
+            onClose={() => setIsOwnerModalOpen(false)}
+            steps={stepsOwner}
+          />
+        </OwnerProvider>
+      )}
+
+      {isTenantModalOpen && (
+        <TenantProvider>
+          <ModalStepper
+            isOpen={isTenantModalOpen}
+            onClose={() => setIsTenantModalOpen(false)}
+            steps={stepsTenant}
+          />
+        </TenantProvider>
+      )}
     </div>
   );
 }

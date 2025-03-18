@@ -2,7 +2,7 @@ import React from 'react';
 
 const SearchInput: React.FC = () => {
   return (
-    <form className="max-w-2xl mx-auto">
+    <form className="max-w-2xl w-full mx-auto">
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only"

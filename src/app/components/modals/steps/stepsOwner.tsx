@@ -1,10 +1,11 @@
 import React from 'react';
 import { StepConfig } from '../modalSteper';
+import {NovoPorprietario} from '@/app/components/modals/steps/componentsSteps/componentsOwner';
 
 export const stepsOwner: StepConfig[] = [
   {
     title: 'Nome',
-    content: <div>Conteúdo para nome</div>,
+    content: <NovoPorprietario/>,
   },
   {
     title: 'Endereço',
