@@ -5,6 +5,7 @@ interface ModalStepperProps {
   onClose: () => void;
   steps: StepConfig[] ;
   className?: string;
+  onSave?: () => void;
 }
 
 export interface StepConfig {
@@ -12,7 +13,7 @@ export interface StepConfig {
   content: React.ReactNode;
 }
 
-export default function ModalStepper({ isOpen, onClose, steps, className }: ModalStepperProps) {
+export default function ModalStepper({ isOpen, onClose, steps, className, onSave }: ModalStepperProps) {
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleNext = () => {
@@ -65,6 +66,7 @@ export default function ModalStepper({ isOpen, onClose, steps, className }: Moda
 
             {currentStep === steps.length - 1 ? (
               <button
+              onClick={onSave}
                 className="px-4 py-2 bg-green-500 text-white rounded"
               >
                 Salvar

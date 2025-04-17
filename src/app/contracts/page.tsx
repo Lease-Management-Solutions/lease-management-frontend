@@ -14,13 +14,15 @@ import { TenantProvider } from "../contexts/TenantContext";
 import stepsTenant from "../components/modals/steps/stepsTenant";
 
 
+
 export default function ContractsDashboard() {
 
     const [isContractModalOpen, setIsContractModalOpen] = useState(false);
     const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
     const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
     const [isTenantModalOpen, setIsTenantModalOpen] = useState(false);
-  
+
+    
   const [contracts, setContracts] = useState([
     {
       id: "123456",
