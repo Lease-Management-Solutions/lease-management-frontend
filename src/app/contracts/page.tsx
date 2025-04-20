@@ -138,7 +138,10 @@ export default function ContractsDashboard() {
 
       {isTenantModalOpen && (
         <TenantProvider>
-          <TenantSaveHandler setSaveFunction={setSaveTenantFunction} />
+          <TenantSaveHandler
+            setSaveFunction={setSaveTenantFunction}
+            onClose={() => setIsTenantModalOpen(false)} // passa a função
+          />
           <ModalStepper
             isOpen={isTenantModalOpen}
             onClose={() => setIsTenantModalOpen(false)}

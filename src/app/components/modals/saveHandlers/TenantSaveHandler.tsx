@@ -7,9 +7,10 @@ import { getCookie } from '@/app/helpers/cookieHelper';
 
 interface TenantSaveHandlerProps {
   setSaveFunction: (fn: () => void) => void;
+  onClose: () => void;
 }
 
-export const TenantSaveHandler = ({ setSaveFunction }: TenantSaveHandlerProps) => {
+export const TenantSaveHandler = ({ setSaveFunction, onClose }: TenantSaveHandlerProps) => {
   const {
     name, cpf, rg, issuingAuthority, rgIssuingState,
     address, maritalStatus, nationality, contact,
@@ -50,6 +51,7 @@ export const TenantSaveHandler = ({ setSaveFunction }: TenantSaveHandlerProps) =
         if (!res.ok) throw new Error('Erro ao salvar dados');
 
         alert('Inquilino salvo com sucesso!');
+        onClose();
       } catch (err) {
         console.error(err);
         alert('Erro ao salvar dados do inquilino.');
