@@ -70,6 +70,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
     street: '',
     number: '',
     neighborhood: '',
+    additionalData: '',
     city: '',
     state: '',
     country: '',

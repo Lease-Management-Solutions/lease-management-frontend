@@ -2,7 +2,8 @@ import React from 'react';
 import { StepConfig } from '../modalSteper';
 import { DadosInquilino } from './componentsSteps/componentsTenants/componentsTenantsPag1';
 import { EndereçoInquilino } from './componentsSteps/componentsTenants/componentsTenantsPag2';
-import { ContatoInquilino } from './componentsSteps/componentsTenants/componentsTenantsPag3';
+import { MaritalNationalityStep } from './componentsSteps/componentsTenants/componentsTenantsPag3';
+import { ContactStep } from './componentsSteps/componentsTenants/componentsTenantsPag4';
 
 export const stepsTenant: StepConfig[] = [
   {
@@ -14,9 +15,13 @@ export const stepsTenant: StepConfig[] = [
     content: <EndereçoInquilino/>,
   },
   { 
-    title: 'Contato',
-    content: <ContatoInquilino/>,
+    title: 'Estado Civil',
+    content: <MaritalNationalityStep/>,
   },
+  { 
+    title: 'Contato',
+    content: <ContactStep/>,
+  }
 ];
 
 export default stepsTenant;
