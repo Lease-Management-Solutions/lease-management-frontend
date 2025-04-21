@@ -1,20 +1,28 @@
 import React from 'react';
 import { StepConfig } from '../modalSteper';
-import {NovoPorprietario} from '@/app/components/modals/steps/componentsSteps/componentsOwner';
+import { DataOwners } from './componentsSteps/componentsOwners/componentsOwnersPag1';
+import { AddressOwner } from './componentsSteps/componentsOwners/componentsOwnersPag2';
+import { MaritalNationalityOwner } from './componentsSteps/componentsOwners/componentsOwnersPag3';
+import { ContactOwner } from './componentsSteps/componentsOwners/componentsOwnersPag4';
+
 
 export const stepsOwner: StepConfig[] = [
   {
-    title: 'Nome',
-    content: <NovoPorprietario/>,
+    title: 'Dados',
+    content: <DataOwners/>,
   },
   {
     title: 'Endereço',
-    content: <div>Conteúdo para endereço</div>,
+    content: <AddressOwner/>
+  },
+  {
+    title: 'Estado Civil',
+    content: <MaritalNationalityOwner/>
   },
   {
     title: 'Contato',
-    content: <div>Conteúdo para contato</div>,
-  },
+    content: <ContactOwner/>
+  }
 ];
 
 export default stepsOwner;

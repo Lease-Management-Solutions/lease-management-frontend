@@ -13,6 +13,7 @@ import stepsOwner from "../components/modals/steps/stepsOwner";
 import { TenantProvider } from "../contexts/TenantContext";
 import stepsTenant from "../components/modals/steps/stepsTenant";
 import { TenantSaveHandler } from '@/app/components/modals/saveHandlers/TenantSaveHandler';
+import { OwnerSaveHandler } from "../components/modals/saveHandlers/OwnerSaveHandler";
 
 
 
@@ -23,6 +24,7 @@ export default function ContractsDashboard() {
     const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
     const [isTenantModalOpen, setIsTenantModalOpen] = useState(false);
     const [saveTenantFunction, setSaveTenantFunction] = useState<() => void>(() => () => {});
+    const [saveOwnerFunction, setSaveOwnerFunction] = useState<() => void>(() => () => {});
     
   const [contracts, setContracts] = useState([
     {
@@ -128,10 +130,15 @@ export default function ContractsDashboard() {
 
       {isOwnerModalOpen && (
         <OwnerProvider>
+          <OwnerSaveHandler
+            setSaveFunction={setSaveOwnerFunction}
+            onClose={() => setIsOwnerModalOpen(false)}
+          />
           <ModalStepper
             isOpen={isOwnerModalOpen}
             onClose={() => setIsOwnerModalOpen(false)}
             steps={stepsOwner}
+            onSave={saveOwnerFunction}
           />
         </OwnerProvider>
       )}
@@ -140,7 +147,7 @@ export default function ContractsDashboard() {
         <TenantProvider>
           <TenantSaveHandler
             setSaveFunction={setSaveTenantFunction}
-            onClose={() => setIsTenantModalOpen(false)} // passa a função
+            onClose={() => setIsTenantModalOpen(false)}
           />
           <ModalStepper
             isOpen={isTenantModalOpen}

@@ -23,7 +23,7 @@ export interface Email {
   startDate: Date;
   endDate?: Date | null;
 }
-
+ 
 interface Contact {
   phones?: Phone[];
   emails?: Email[];
@@ -60,9 +60,7 @@ interface OwnerProviderProps {
 
 const OwnerContext = createContext<OwnerContextProps | undefined>(undefined);
 
- 
 export const OwnerProvider: React.FC<OwnerProviderProps> = ({ children }) => {
-
   const [name, setName] = useState<string>('');
   const [cpf, setCpf] = useState<string>('');
   const [rg, setRg] = useState<string>('');
