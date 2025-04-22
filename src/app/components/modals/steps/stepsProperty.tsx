@@ -1,30 +1,9 @@
 import React from 'react';
 import { StepConfig } from '../modalSteper';
-import ButtonGreen from '../../forms/inputs/buttons/ButtonGreen';
 import { AddressProperty } from './componentsSteps/componentsProperties/componentsPropertiesPag1';
-
-interface EscolhaProprietarioProps {
-  setIsOwnerModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const EscolhaProprietario: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerModalOpen }) => {
+import { OwnerProperty } from './componentsSteps/componentsProperties/componentsPropertiesPag2';
 
 
-  return (
-    <div>
-      <label>
-        Proprietário:
-        <input
-          type="text"
-          className="border p-2"
-        />
-      </label>
-      <ButtonGreen onClick={() => setIsOwnerModalOpen(true)}>
-        Novo Proprietário
-      </ButtonGreen>
-    </div>
-  );
-};
 
 export const getStepsProperty = (setIsOwnerModalOpen: React.Dispatch<React.SetStateAction<boolean>>): StepConfig[] => {
   
@@ -35,7 +14,7 @@ export const getStepsProperty = (setIsOwnerModalOpen: React.Dispatch<React.SetSt
     },
     {
       title: 'Escolha o proprietário',
-      content: <EscolhaProprietario setIsOwnerModalOpen={setIsOwnerModalOpen} />,
+      content: <OwnerProperty setIsOwnerModalOpen={setIsOwnerModalOpen} />,
     },
     {
       title: '3 page',
