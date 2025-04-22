@@ -1,7 +1,7 @@
 import React from 'react';
 import { StepConfig } from '../modalSteper';
 import ButtonGreen from '../../forms/inputs/buttons/ButtonGreen';
-import { EnderecoNovoImovel } from './componentsSteps/componentsProperty';
+import { AddressProperty } from './componentsSteps/componentsProperties/componentsPropertiesPag1';
 
 interface EscolhaProprietarioProps {
   setIsOwnerModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,7 +31,7 @@ export const getStepsProperty = (setIsOwnerModalOpen: React.Dispatch<React.SetSt
   return [
     {
       title: 'endereço',
-      content: <EnderecoNovoImovel/>,
+      content: <AddressProperty/>,
     },
     {
       title: 'Escolha o proprietário',
