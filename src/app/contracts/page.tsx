@@ -14,7 +14,7 @@ import { TenantProvider } from "../contexts/TenantContext";
 import stepsTenant from "../components/modals/steps/stepsTenant";
 import { TenantSaveHandler } from '@/app/components/modals/saveHandlers/TenantSaveHandler';
 import { OwnerSaveHandler } from "../components/modals/saveHandlers/OwnerSaveHandler";
-
+import { PropertySaveHandler } from "../components/modals/saveHandlers/PropertySaveHandler";
 
 
 export default function ContractsDashboard() {
@@ -25,6 +25,7 @@ export default function ContractsDashboard() {
     const [isTenantModalOpen, setIsTenantModalOpen] = useState(false);
     const [saveTenantFunction, setSaveTenantFunction] = useState<() => void>(() => () => {});
     const [saveOwnerFunction, setSaveOwnerFunction] = useState<() => void>(() => () => {});
+    const [savePropertyFunction, setSavePropertyFunction] = useState<() => void>(() => () => {});
     
   const [contracts, setContracts] = useState([
     {
@@ -120,10 +121,15 @@ export default function ContractsDashboard() {
 
       {isPropertyModalOpen && (
         <PropertyProvider>
+          <PropertySaveHandler
+            setSaveFunction={setSavePropertyFunction}
+            onClose={() => setIsPropertyModalOpen(false)}
+          />
           <ModalStepper
             isOpen={isPropertyModalOpen}
             onClose={() => setIsPropertyModalOpen(false)}
             steps={getStepsProperty(setIsOwnerModalOpen)}
+            onSave={savePropertyFunction}
           />
         </PropertyProvider>
       )}

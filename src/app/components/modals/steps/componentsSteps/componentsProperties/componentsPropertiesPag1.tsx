@@ -2,8 +2,7 @@ import React from 'react';
 import { PropertyTypeEnum, usePropertyContext } from '@/app/contexts/PropertyContext';
 
 export const AddressProperty = () => {
-  const { address, setAddress } = usePropertyContext();
-  const { typeProperty, setTypeProperty } = usePropertyContext();
+  const { address, setAddress, typeProperty, setTypeProperty } = usePropertyContext();
 
 
   const handleAddressChange = (field: keyof typeof address, value: string) => {

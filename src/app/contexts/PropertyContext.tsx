@@ -9,7 +9,7 @@ interface Address {
   state: string;
   country: string;
 }
- 
+  
 export interface PropertyTypeEnum {
   type:  "casa"
     | "apartamento"
@@ -40,17 +40,33 @@ export interface PropertyTypeEnum {
     percentage: number;
     startDate: Date;
     endDate?: Date | null; // Null quando ainda é proprietário
+  }
+
+  interface DataPropertyDocs {
+    waterCode?: string;
+    energyCode?: string;
+    iptuCode?: string;
+    registrationNumber?: string;
+  }
+  
+  interface Attachment {
+    type: "matricula" | "agua" | "energia" | "iptu"; // Define o tipo do anexo
+    filePath: string; 
 }
 
-interface PropertyContextProps {
+  interface PropertyContextProps {
     address: Address;
     setAddress: React.Dispatch<React.SetStateAction<Address>>;
     typeProperty: PropertyTypeEnum;
     setTypeProperty: React.Dispatch<React.SetStateAction<PropertyTypeEnum>>;
     ownerInfo: OwnerInfo[];
     setOwnerInfo: React.Dispatch<React.SetStateAction<OwnerInfo[]>>;
-    dados: string | null;
-    setDados: React.Dispatch<React.SetStateAction<string | null>>;}
+    dataPropertyDocs: DataPropertyDocs;
+    setDataPropertyDocs: React.Dispatch<React.SetStateAction<DataPropertyDocs>>;
+    attachment: Attachment[];
+    setAttachment: React.Dispatch<React.SetStateAction<Attachment[]>>;
+  }
+  
 
 
 interface PropertyProviderProps {
@@ -62,10 +78,16 @@ const PropertyContext = createContext<PropertyContextProps | undefined>(undefine
 
 export const PropertyProvider: React.FC<PropertyProviderProps> = ({ children }) => {
   const [ownerInfo, setOwnerInfo] = useState<OwnerInfo[]>([]);
-  const [dados, setDados] = useState<string | null>(null);
   const [typeProperty, setTypeProperty] = useState<PropertyTypeEnum>({
     type: 'casa'
   });
+  const [dataPropertyDocs, setDataPropertyDocs] = useState<DataPropertyDocs>({
+    waterCode: '',
+    energyCode: '',
+    iptuCode: '',
+    registrationNumber: ''
+  });
+  const [attachment, setAttachment] = useState<Attachment[]>([]);
   const [address, setAddress] = useState<Address>({
     street: '',
     number: '',
@@ -86,8 +108,11 @@ export const PropertyProvider: React.FC<PropertyProviderProps> = ({ children }) 
         setTypeProperty, 
         ownerInfo, 
         setOwnerInfo, 
-        dados, 
-        setDados }}>
+        dataPropertyDocs,
+        setDataPropertyDocs,
+        attachment,
+        setAttachment,
+         }}>
       {children}
     </PropertyContext.Provider>
   );
