@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonGreen from '@/app/components/forms/inputs/buttons/ButtonGreen';
 import SelectBase from '@/app/components/forms/inputs/select/selectBase';
 import { getCookie } from '@/app/helpers/cookieHelper';
+import { usePropertyContext } from '@/app/contexts/PropertyContext';
 
 interface PersonOption {
   id: string;
@@ -14,12 +15,18 @@ interface EscolhaProprietarioProps {
 }
 
 export const OwnerProperty: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerModalOpen }) => {
+  const { ownerInfo, setOwnerInfo } = usePropertyContext();
   const [options, setOptions] = useState<PersonOption[]>([]);
-  const [selectedOwner, setSelectedOwner] = useState<string>('');
+  const [selectedOwner, setSelectedOwner] = useState<string>(ownerInfo[0]?.id_owner || '');
   const [selectedCPF, setSelectedCPF] = useState<string>('');
-  const [percentage, setPercentage] = useState<string>('');
-  const [extraOwners, setExtraOwners] = useState<{ id: string; cpf: string; percentage: string }[]>([]);
-  const [shouldReloadOwners, setShouldReloadOwners] = useState(false);
+  const [percentage, setPercentage] = useState<string>(ownerInfo[0]?.percentage?.toString() || '');
+  const [extraOwners, setExtraOwners] = useState<{ id: string; cpf: string; percentage: string }[]>(
+    ownerInfo.slice(1).map((owner) => ({
+      id: owner.id_owner,
+      cpf: '',
+      percentage: owner.percentage.toString(),
+    }))
+  );
 
   const fetchOwners = async () => {
     const token = getCookie('token');
@@ -46,11 +53,24 @@ export const OwnerProperty: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerMo
   }, []);
 
   useEffect(() => {
-    if (shouldReloadOwners) {
-      fetchOwners();
-      setShouldReloadOwners(false);
-    }
-  }, [shouldReloadOwners]);
+    // Atualiza o contexto sempre que os proprietários ou percentuais mudarem
+    const novosProprietarios = [
+      {
+        id_owner: selectedOwner,
+        percentage: parseFloat(percentage) || 0,
+        startDate: new Date(),
+        endDate: null,
+      },
+      ...extraOwners.map((owner) => ({
+        id_owner: owner.id,
+        percentage: parseFloat(owner.percentage) || 0,
+        startDate: new Date(),
+        endDate: null,
+      })),
+    ];
+    console.log('Proprietários atualizados:', novosProprietarios); // Adiciona o console.log aqui
+    setOwnerInfo(novosProprietarios);
+  }, [selectedOwner, percentage, extraOwners, setOwnerInfo]);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedId = event.target.value;
@@ -79,11 +99,6 @@ export const OwnerProperty: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerMo
 
   const handleOpenModal = () => {
     setIsOwnerModalOpen(true);
-    setTimeout(() => setShouldReloadOwners(true), 1000); // força reload após fechar o modal
-  };
-
-  const reloadOwners = () => {
-    setShouldReloadOwners(true);
   };
 
   return (
@@ -110,29 +125,8 @@ export const OwnerProperty: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerMo
             />
           </div>
           <div className="w-4/12 flex items-center gap-2">
-  <ButtonGreen onClick={handleOpenModal}>+ Novo</ButtonGreen>
-  <button
-    type="button"
-    onClick={reloadOwners}
-    className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
-    title="Atualizar Lista de Proprietários"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={2}
-      stroke="currentColor"
-      className="w-5 h-5"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M4.5 12a7.5 7.5 0 1113.29 4.5M12 15v6m0 0l3-3m-3 3l-3-3"
-      />
-    </svg>
-  </button>
-</div>
+            <ButtonGreen onClick={handleOpenModal}>+ Novo</ButtonGreen>
+          </div>
         </div>
       </div>
 

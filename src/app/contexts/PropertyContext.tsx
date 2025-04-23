@@ -9,7 +9,7 @@ interface Address {
   state: string;
   country: string;
 }
-
+ 
 export interface PropertyTypeEnum {
   type:  "casa"
     | "apartamento"
@@ -35,13 +35,20 @@ export interface PropertyTypeEnum {
     | "consultorio"
   }
 
+  interface OwnerInfo {
+    id_owner: string;
+    percentage: number;
+    startDate: Date;
+    endDate?: Date | null; // Null quando ainda é proprietário
+}
+
 interface PropertyContextProps {
     address: Address;
     setAddress: React.Dispatch<React.SetStateAction<Address>>;
     typeProperty: PropertyTypeEnum;
     setTypeProperty: React.Dispatch<React.SetStateAction<PropertyTypeEnum>>;
-    owners: string | null;
-    setOwners: React.Dispatch<React.SetStateAction<string | null>>;
+    ownerInfo: OwnerInfo[];
+    setOwnerInfo: React.Dispatch<React.SetStateAction<OwnerInfo[]>>;
     dados: string | null;
     setDados: React.Dispatch<React.SetStateAction<string | null>>;}
 
@@ -54,7 +61,7 @@ const PropertyContext = createContext<PropertyContextProps | undefined>(undefine
   
 
 export const PropertyProvider: React.FC<PropertyProviderProps> = ({ children }) => {
-  const [owners, setOwners] = useState<string | null>(null);
+  const [ownerInfo, setOwnerInfo] = useState<OwnerInfo[]>([]);
   const [dados, setDados] = useState<string | null>(null);
   const [typeProperty, setTypeProperty] = useState<PropertyTypeEnum>({
     type: 'casa'
@@ -77,8 +84,8 @@ export const PropertyProvider: React.FC<PropertyProviderProps> = ({ children }) 
         setAddress,
         typeProperty,
         setTypeProperty, 
-        owners, 
-        setOwners, 
+        ownerInfo, 
+        setOwnerInfo, 
         dados, 
         setDados }}>
       {children}
