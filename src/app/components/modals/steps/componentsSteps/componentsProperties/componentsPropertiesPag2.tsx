@@ -52,6 +52,10 @@ export const OwnerProperty: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerMo
     fetchOwners();
   }, []);
 
+  const reloadOwners = async () => {
+    await fetchOwners(); // Chama diretamente a função de busca
+  };
+
   useEffect(() => {
     // Atualiza o contexto sempre que os proprietários ou percentuais mudarem
     const novosProprietarios = [
@@ -68,7 +72,6 @@ export const OwnerProperty: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerMo
         endDate: null,
       })),
     ];
-    console.log('Proprietários atualizados:', novosProprietarios); // Adiciona o console.log aqui
     setOwnerInfo(novosProprietarios);
   }, [selectedOwner, percentage, extraOwners, setOwnerInfo]);
 
@@ -126,6 +129,27 @@ export const OwnerProperty: React.FC<EscolhaProprietarioProps> = ({ setIsOwnerMo
           </div>
           <div className="w-4/12 flex items-center gap-2">
             <ButtonGreen onClick={handleOpenModal}>+ Novo</ButtonGreen>
+            <button
+              type="button"
+              onClick={reloadOwners}
+              className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 flex items-center justify-center"
+              title="Atualizar Lista de Proprietários"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 12a7.5 7.5 0 1113.29 4.5M12 15v6m0 0l3-3m-3 3l-3-3"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
