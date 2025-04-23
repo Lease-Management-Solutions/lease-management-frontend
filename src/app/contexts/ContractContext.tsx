@@ -6,6 +6,13 @@ interface Owner {
   percentage: number;
 }
 
+interface Tenants {
+  id: string;
+  percentage: number;
+  startDate: Date;
+  endDate?: Date | null;
+}
+ 
 interface ContractContextProps {
   selectedPropertyId: string | null;
   setSelectedPropertyId: React.Dispatch<React.SetStateAction<string | null>>;
@@ -13,6 +20,8 @@ interface ContractContextProps {
   setOwners: React.Dispatch<React.SetStateAction<Owner[]>>;
   leaseType: string | null;
   setLeaseType: React.Dispatch<React.SetStateAction<string | null>>;
+  tenants: Tenants[];
+  setTenants: React.Dispatch<React.SetStateAction<Tenants[]>>;
 }
 
 interface ContractProviderProps {
@@ -25,9 +34,21 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({ children }) 
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [owners, setOwners] = useState<Owner[]>([]);
   const [leaseType, setLeaseType] = useState<string | null>(null);
+  const [tenants, setTenants] = useState<Tenants[]>([]);
 
   return (
-    <ContractContext.Provider value={{ selectedPropertyId, setSelectedPropertyId, owners, setOwners, leaseType, setLeaseType }}>
+    <ContractContext.Provider 
+      value={{ 
+        selectedPropertyId, 
+        setSelectedPropertyId, 
+        owners, 
+        setOwners, 
+        leaseType, 
+        setLeaseType,
+        tenants, 
+        setTenants 
+
+      }}>
       {children}
     </ContractContext.Provider>
   );

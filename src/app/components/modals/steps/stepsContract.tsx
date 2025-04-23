@@ -1,21 +1,9 @@
 import React from 'react';
 import { StepConfig } from '../modalSteper';
-import ButtonGreen from "@/app/components/forms/inputs/buttons/ButtonGreen";
 import { EscolhaImovel } from './componentsSteps/componentsContracts/componentsContractsPag1';
+import { TenantContract } from './componentsSteps/componentsContracts/componentsContractsPag2';
 
 
-interface EscolhaInquilinoProps {
-  setIsTenantModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const EscolhaInquilino: React.FC<EscolhaInquilinoProps> = ({ setIsTenantModalOpen }) => (
-  <div>
-    Conteúdo para escolha do inquilino
-    <ButtonGreen onClick={() => setIsTenantModalOpen(true)}>
-      Novo Inquilino
-    </ButtonGreen>
-  </div>
-);
 
 const getStepsContract = (setIsPropertyModalOpen: React.Dispatch<React.SetStateAction<boolean>>, setIsTenantModalOpen: React.Dispatch<React.SetStateAction<boolean>>): StepConfig[] => [
   {
@@ -24,7 +12,7 @@ const getStepsContract = (setIsPropertyModalOpen: React.Dispatch<React.SetStateA
   },
   {
     title: 'Escolha Inquilino',
-    content: <EscolhaInquilino setIsTenantModalOpen={setIsTenantModalOpen} />,
+    content: <TenantContract setIsTenantModalOpen={setIsTenantModalOpen} />,
   },
   {
     title: 'Datas do Contrato',
