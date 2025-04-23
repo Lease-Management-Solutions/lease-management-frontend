@@ -2,6 +2,7 @@ import React from 'react';
 import { StepConfig } from '../modalSteper';
 import { EscolhaImovel } from './componentsSteps/componentsContracts/componentsContractsPag1';
 import { TenantContract } from './componentsSteps/componentsContracts/componentsContractsPag2';
+import { DateContrat } from './componentsSteps/componentsContracts/componentsContractsPag3';
 
 
 
@@ -16,7 +17,7 @@ const getStepsContract = (setIsPropertyModalOpen: React.Dispatch<React.SetStateA
   },
   {
     title: 'Datas do Contrato',
-    content: <div>Conteúdo para datas do contrato</div>,
+    content: <DateContrat/>,
   },
 ];
 
