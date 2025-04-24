@@ -13,8 +13,9 @@ interface Tenants {
   endDate?: Date | null;
 }
 
-interface Guarantee {
+export interface Guarantee  {
   id: string;
+  type: GuaranteeTypeEnum;
   startDate: Date;
   endDate?: Date | null;
 }
@@ -34,7 +35,26 @@ interface FireInsurance {
   startDate: Date;
   endDate?: Date | null;
 }
+export enum AdjustmentPeriodEnum {
+  "12 meses" = "12 meses",
+  "24 meses" = "24 meses",
+  "36 meses" = "36 meses",
+  "48 meses" = "48 meses",
+  "sem reajuste" = "sem reajuste"
+}
 
+export enum AdjustmentIndexEnum {
+  IGPM = "IGPM",
+  INPC = "INPC",
+  IPCA = "IPCA"
+}
+
+export enum GuaranteeTypeEnum {
+  Caucao = "Caução",
+  SeguroFianca = "Seguro fiança",
+  Fiador = "Fiador",
+  SemGarantia = "Sem garantia"
+}
 
 interface ContractContextProps {
   selectedPropertyId: string | null;
@@ -59,10 +79,10 @@ interface ContractContextProps {
   setRentDueDay: React.Dispatch<React.SetStateAction<number | null>>;
   keyDeliveryDate: Date | null;
   setKeyDeliveryDate: React.Dispatch<React.SetStateAction<Date | null>>;
-  adjustmentPeriod: string | null;
-  setAdjustmentPeriod: React.Dispatch<React.SetStateAction<string | null>>;
-  adjustmentIndex: string | null;
-  setAdjustmentIndex: React.Dispatch<React.SetStateAction<string | null>>;
+  adjustmentPeriod: AdjustmentPeriodEnum | null;
+  setAdjustmentPeriod: React.Dispatch<React.SetStateAction<AdjustmentPeriodEnum | null>>;
+  adjustmentIndex: AdjustmentIndexEnum | null;
+  setAdjustmentIndex: React.Dispatch<React.SetStateAction<AdjustmentIndexEnum | null>>;
   firstRentAtStart: boolean;
   setFirstRentAtStart: React.Dispatch<React.SetStateAction<boolean>>;
   penaltyExemption: PenaltyExemption;
@@ -77,7 +97,6 @@ interface ContractContextProps {
   setGuaranteedTransfer: React.Dispatch<React.SetStateAction<GuaranteedTransfer>>;
   fireInsurance: FireInsurance | null;
   setFireInsurance: React.Dispatch<React.SetStateAction<FireInsurance | null>>;
-
   firstRentCommission: number | null;
   setFirstRentCommission: React.Dispatch<React.SetStateAction<number | null>>;
 }
@@ -100,8 +119,8 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({ children }) 
   const [initialRentValue, setInitialRentValue] = useState<number | null>(null);
   const [rentDueDay, setRentDueDay] = useState<number | null>(null);
   const [keyDeliveryDate, setKeyDeliveryDate] = useState<Date | null>(null);
-  const [adjustmentPeriod, setAdjustmentPeriod] = useState<string | null>(null);
-  const [adjustmentIndex, setAdjustmentIndex] = useState<string | null>(null);
+  const [adjustmentPeriod, setAdjustmentPeriod] = useState<AdjustmentPeriodEnum | null>(null);
+  const [adjustmentIndex, setAdjustmentIndex] = useState<AdjustmentIndexEnum | null>(null);
   const [firstRentAtStart, setFirstRentAtStart] = useState<boolean>(false);
   const [penaltyExemption, setPenaltyExemption] = useState<PenaltyExemption>({ isExempt: false, exemptionPeriodInMonths: 0 });
   const [lateFeeRate, setLateFeeRate] = useState<number | null>(null);
