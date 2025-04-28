@@ -15,7 +15,7 @@ export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHa
     owners,
     leaseType,
     tenants,
-    guarantees,
+    
     contractStartDate,
     contractDuration,
     contractEndDate,
@@ -54,12 +54,7 @@ export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHa
             endDate: tenant.endDate,
             percentage: tenant.percentage,
           })),
-          guarantees: guarantees.map((guarantee) => ({
-            id_garantia: guarantee.id,
-            type: guarantee.type,
-            startDate: guarantee.startDate,
-            endDate: guarantee.endDate,
-          })),
+
           contractStartDate,
           contractDuration,
           contractEndDate,
@@ -112,7 +107,7 @@ export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHa
     owners,
     leaseType,
     tenants,
-    guarantees,
+
     contractStartDate,
     contractDuration,
     contractEndDate,

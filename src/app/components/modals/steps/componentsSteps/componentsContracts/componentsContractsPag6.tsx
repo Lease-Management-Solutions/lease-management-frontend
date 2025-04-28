@@ -26,7 +26,7 @@ export const GuaranteeContract = () => {
 
       {guarantees.map((guarantee, index) => (
         <label key={index} className="w-full md:w-4/12">
-          Tipo de Garantia
+          Tipo de Garantia 
           <select
             value={guarantee.type}
             onChange={(e) => handleGuaranteeChange(index, "type", e.target.value)}

@@ -112,7 +112,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({ children }) 
   const [owners, setOwners] = useState<Owner[]>([]);
   const [leaseType, setLeaseType] = useState<string | null>(null);
   const [tenants, setTenants] = useState<Tenants[]>([]);
-  const [guarantees, setGuarantees] = useState<Guarantee[]>([]);
+  const [guarantees, setGuarantees] = useState<Guarantee[]>([
+    { id: "6809886c17815af46ff67d7e", type: GuaranteeTypeEnum.Caucao, startDate: new Date(), endDate: null },
+  ]);
   const [contractStartDate, setContractStartDate] = useState<Date | null>(null);
   const [contractDuration, setContractDuration] = useState<number | null>(null);
   const [contractEndDate, setContractEndDate] = useState<Date | null>(null);
