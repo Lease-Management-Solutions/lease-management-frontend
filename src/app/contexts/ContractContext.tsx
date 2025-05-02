@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { ObjectId } from 'mongoose';
 
 interface Owner {
   id: string;
@@ -13,11 +14,33 @@ interface Tenants {
   endDate?: Date | null;
 }
 
-export interface Guarantee  {
-  id: string;
+interface DepositDetail {
+  date: Date;
+  fileAttachment: string;
+  partialValue: number;
+  depositAccount: string;
+}
+
+interface Caucao {
+  depositAccount?: string;
+  totalValue?: number;
+  deposits?: DepositDetail[];
+}
+
+interface RentalInsurance {
+  installmentValue?: number;
+  installmentQty?: number;
+  policyNumber?: string;
+}
+
+export interface Guarantee {
+  id?: ObjectId;
   type: GuaranteeTypeEnum;
   startDate: Date;
   endDate?: Date | null;
+  fiadores?: string[]; // IDs de pessoas
+  caucao?: Caucao;
+  rentalInsurance?: RentalInsurance;
 }
 
 interface PenaltyExemption {
@@ -50,10 +73,10 @@ export enum AdjustmentIndexEnum {
 }
 
 export enum GuaranteeTypeEnum {
-  Caucao = "Caução",
-  SeguroFianca = "Seguro fiança",
+  Caucao = "Caucao",
+  SeguroFianca = "SeguroFianca",
   Fiador = "Fiador",
-  SemGarantia = "Sem garantia"
+  SemGarantia = "SemGarantia",
 }
 
 interface ContractContextProps {
@@ -112,9 +135,10 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({ children }) 
   const [owners, setOwners] = useState<Owner[]>([]);
   const [leaseType, setLeaseType] = useState<string | null>(null);
   const [tenants, setTenants] = useState<Tenants[]>([]);
-  const [guarantees, setGuarantees] = useState<Guarantee[]>([
-    { id: "6809886c17815af46ff67d7e", type: GuaranteeTypeEnum.Caucao, startDate: new Date(), endDate: null },
-  ]);
+  const [guarantees, setGuarantees] = useState<Guarantee[]>([{
+    type: GuaranteeTypeEnum.SemGarantia,
+    startDate: new Date(),
+  }]);
   const [contractStartDate, setContractStartDate] = useState<Date | null>(null);
   const [contractDuration, setContractDuration] = useState<number | null>(null);
   const [contractEndDate, setContractEndDate] = useState<Date | null>(null);

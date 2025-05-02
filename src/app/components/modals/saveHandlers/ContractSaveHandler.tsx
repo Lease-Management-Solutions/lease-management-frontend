@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useContractContext } from '@/app/contexts/ContractContext';
+import { GuaranteeTypeEnum, useContractContext } from '@/app/contexts/ContractContext';
 import { getCookie } from '@/app/helpers/cookieHelper';
 
 interface ContractSaveHandlerProps {
@@ -11,11 +11,11 @@ interface ContractSaveHandlerProps {
 
 export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHandlerProps) => {
   const {
+    guarantees,
+    setGuarantees,
     selectedPropertyId,
-    owners,
     leaseType,
     tenants,
-    
     contractStartDate,
     contractDuration,
     contractEndDate,
@@ -43,18 +43,85 @@ export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHa
         const payloadToken = JSON.parse(atob(token.split('.')[1]));
         const userId = payloadToken.id;
 
-        // Monta o payload com todos os dados do contexto
+        // Garantir ao menos uma garantia do tipo "Sem garantia"
+        const guaranteesToSend = guarantees.length > 0 ? guarantees : [{
+          type: GuaranteeTypeEnum.SemGarantia,
+          startDate: contractStartDate ?? new Date(),
+          endDate: contractEndDate ?? null,
+        }];
+
+        // Salvar garantias individualmente e obter os IDs
+        const savedGuarantees = [];
+
+        for (const guarantee of guaranteesToSend) {
+          // Montar payload com base no tipo de garantia
+          const payload: any = {
+            type: guarantee.type, // Agora o valor corresponde ao GuaranteeTypeEnum atualizado
+            startDate: guarantee.startDate,
+            endDate: guarantee.endDate ?? null,
+            contractId: null, // O contrato ainda não foi criado
+          };
+          
+          // Adicionar campos específicos com base no tipo de garantia
+          if (guarantee.type === GuaranteeTypeEnum.Fiador) {
+            if (!guarantee.fiadores || guarantee.fiadores.length === 0) {
+              throw new Error('É necessário informar pelo menos um fiador para o tipo Fiador.');
+            }
+            payload.fiadores = guarantee.fiadores;
+          } else if (guarantee.type === GuaranteeTypeEnum.Caucao) {
+            if (!guarantee.caucao || !guarantee.caucao.totalValue || !guarantee.caucao.depositAccount) {
+              throw new Error('Dados de caução inválidos. Verifique totalValue e depositAccount.');
+            }
+            payload.caucao = guarantee.caucao;
+          } else if (guarantee.type === GuaranteeTypeEnum.SeguroFianca) {
+            if (!guarantee.rentalInsurance || !guarantee.rentalInsurance.installmentValue) {
+              throw new Error('Dados de seguro fiança inválidos. Verifique installmentValue.');
+            }
+            payload.rentalInsurance = guarantee.rentalInsurance;
+          }
+
+          console.log('Payload enviado para /guarantee:', JSON.stringify(payload, null, 2));
+
+          const res = await fetch('http://localhost:2000/guarantee', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            const errorResponse = await res.json();
+            console.error('Erro do backend:', errorResponse);
+            throw new Error('Erro ao salvar garantia');
+          }
+
+          const saved = await res.json();
+          savedGuarantees.push({
+            ...guarantee,
+            id: saved.garantee._id, // Substituir ID temporário pelo ObjectId retornado
+          });
+        }
+
+        setGuarantees(savedGuarantees);
+
+        // Montar payload do contrato
         const contractData = {
           id_imovel: selectedPropertyId,
           leaseType,
-          owners,
           tenants: tenants.map((tenant) => ({
             id_locatario: tenant.id,
             startDate: tenant.startDate,
             endDate: tenant.endDate,
             percentage: tenant.percentage,
           })),
-
+          guarantees: savedGuarantees.map((guarantee) => ({
+            _id: guarantee.id, // Agora é um ObjectId
+            type: guarantee.type,
+            startDate: guarantee.startDate,
+            endDate: guarantee.endDate,
+          })),
           contractStartDate,
           contractDuration,
           contractEndDate,
@@ -81,8 +148,8 @@ export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHa
           updatedBy: userId,
         };
 
-        // Envia a requisição para o backend
-        const res = await fetch('http://localhost:2000/contract', {
+        // Salvar contrato
+        const contractResponse = await fetch('http://localhost:2000/contract', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -91,7 +158,7 @@ export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHa
           body: JSON.stringify(contractData),
         });
 
-        if (!res.ok) throw new Error('Erro ao salvar contrato');
+        if (!contractResponse.ok) throw new Error('Erro ao salvar contrato');
 
         alert('Contrato salvo com sucesso!');
         onClose();
@@ -103,11 +170,11 @@ export const ContractSaveHandler = ({ setSaveFunction, onClose }: ContractSaveHa
 
     setSaveFunction(() => handleSave);
   }, [
+    guarantees,
+    setGuarantees,
     selectedPropertyId,
-    owners,
     leaseType,
     tenants,
-
     contractStartDate,
     contractDuration,
     contractEndDate,
